@@ -1,0 +1,37 @@
+name: Purin
+main: SSC\main
+version: 1.1
+api: [1.0.0,2.0.0,3.0.0]
+load: POSTWORLD
+author: yurisi
+description: poopCoding
+depend:
+ - EconomyAPI
+commands:
+ atama:
+  usage:
+  description: "ディスプレイネームを変えます"
+ syo:
+  usage:
+  description: "称号を変えます"
+ profile:
+   usage:
+   description: "プロフィールを確認できます"
+ hitokoto:
+   usage:
+   description: "一言メッセージを変えれます"
+ parm:
+   usage:
+   description: ""
+ job:
+   usage:
+   description: "jobを変更する"
+ change:
+   usage:
+   description: "交換所"
+ mywarp:
+   usage:
+   description: "マイワープ"
+ cmd:
+   usage:
+   description: "コマンドのヘルプを表示"

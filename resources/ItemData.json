@@ -1,0 +1,165 @@
+{
+	"0": {
+		"damage": false,
+		"name": "空気",
+		"value": 0
+	},
+	"1": {
+		"damage": true,
+		"0": {
+			"name": "石",
+			"value": 3
+		},
+		"1": {
+			"name": "花崗岩",
+			"value": 3
+		},
+		"2": {
+			"name": "磨かれた花崗岩",
+			"value": 3
+		},
+		"3": {
+			"name": "閃緑岩",
+			"value": 3
+		},
+		"4": {
+			"name": "磨かれた閃緑岩",
+			"value": 3
+		},
+		"5": {
+			"name": "安山岩",
+			"value": 3
+		},
+		"6": {
+			"name": "磨かれた安山岩",
+			"value": 3
+		}
+	},
+	"2": {
+		"damage": false,
+		"name": "草ブロック",
+		"value": 5
+	},
+	"3": {
+		"damage": true,
+		"0": {
+			"name": "土",
+			"value": 3
+		},
+		"1": {
+			"name": "荒れた土",
+			"value": 3
+		}
+	},
+	"4": {
+		"damage": false,
+		"name": "丸石",
+		"value": 3
+	},
+	"5": {
+		"damage": true,
+		"0": {
+			"name": "樫の木",
+			"value": 5
+		},
+		"1": {
+			"name": "松の木",
+			"value": 5
+		},
+		"2": {
+			"name": "白樺の木",
+			"value": 5
+		},
+		"3": {
+			"name": "ジャングルの木",
+			"value": 5
+		},
+		"4": {
+			"name": "アカシアの木",
+			"value": 5
+		},
+		"5": {
+			"name": "ダークオークの木",
+			"value": 5
+		}
+	},
+	"6": {
+		"damage": true,
+		"0": {
+			"name": "樫の苗",
+			"value": 5
+		},
+		"1": {
+			"name": "松の苗",
+			"value": 5
+		},
+		"2": {
+			"name": "白樺の苗",
+			"value": 5
+		},
+		"3": {
+			"name": "ジャングルの苗",
+			"value": 5
+		},
+		"4": {
+			"name": "アカシアの苗",
+			"value": 5
+		},
+		"5": {
+			"name": "ダークオークの苗",
+			"value": 5
+		}
+	},
+	"7": {
+		"damage": false,
+		"name": "岩盤",
+		"value": 0
+	},
+	"8": {
+		"damage": false,
+		"name": "水",
+		"value": 0
+	},
+	"9": {
+		"damage": false,
+		"name": "水",
+		"value": 0
+	},
+	"10": {
+		"damage": false,
+		"name": "溶岩",
+		"value": 0
+	},
+	"11": {
+		"damage": false,
+		"name": "溶岩",
+		"value": 0
+	},
+	"12": {
+		"damage": true,
+		"0": {
+			"name": "砂",
+			"value": 10
+		},
+		"1": {
+			"name": "赤砂",
+			"value": 10
+		}
+	},
+	"13": {
+		"damage": false,
+		"name": "砂利",
+		"value": 10
+	},
+	"14": {
+		"damage": false,
+		"name": "金鉱石",
+		"value": 900
+	},
+	"15": {
+		"damage": false,
+		"name": "鉄鉱石",
+		"value": 350
+	}
+
+}
