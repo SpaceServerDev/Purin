@@ -7,6 +7,7 @@ namespace SSC\Form\LevelModeForm;
 use pocketmine\form\Form;
 use pocketmine\form\FormValidationException;
 use pocketmine\Player;
+use pocketmine\Server;
 use SSC\main;
 
 class LevelmodeForm implements Form {
@@ -28,7 +29,14 @@ class LevelmodeForm implements Form {
 	 * @throws FormValidationException if the data could not be processed
 	 */
 	public function handleResponse(Player $player, $data): void {
-		// TODO: Implement handleResponse() method.
+		if(!is_numeric($data)) return;
+		if($data===0){
+			Server::getInstance()->dispatchCommand($player,"advancemode");
+			return;
+		}
+		Server::getInstance()->dispatchCommand($player,"expertmode");
+		return;
+
 	}
 
 	/**

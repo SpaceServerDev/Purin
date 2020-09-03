@@ -50,6 +50,7 @@ use SSC\Gun\Bombing\BombingEvent;
 use SSC\Gun\Bombing\BombingTask;
 use SSC\Item\Item_AK47;
 use SSC\Item\Item_AWM;
+use SSC\Item\Item_RPG7;
 use SSC\Item\Item_UZI;
 use SSC\main;
 
@@ -75,9 +76,6 @@ class testCommand extends VanillaCommand {
 			$level = $sender->getPlayer()->getLevel();
 
 			var_dump($sender->getInventory()->getItemInHand()->getNamedTag());
-			$cls = new BombingEvent();
-			main::getMain()->getScheduler()->scheduleDelayedTask(new BombingTask($sender, $cls), 20);
-			Server::getInstance()->broadcastTip($sender->getName() . "が砲撃支援を要請した！");
 
 			$item=Item_AK47::get();
 			$sender->getInventory()->addItem($item);
@@ -88,7 +86,7 @@ class testCommand extends VanillaCommand {
 			$item=Item_AWM::get();
 			$sender->getInventory()->addItem($item);
 
-
+			$item=Item_RPG7::get();
 			$sender->getInventory()->addItem($item);
 			//main::getMain()->getScheduler()->scheduleRepeatingTask(new TestTask($this->Bombing($x, $y, $z, $sender, $level)), 2);
 		}
@@ -96,18 +94,6 @@ class testCommand extends VanillaCommand {
 		return true;
 	}
 
-	public function test($x,$y,$z,$sender,Level $level): \Generator {
-		$sender->sendMessage("おめでとう！ yurisi と Cookietattchan と VillagerMeyason が 結婚しました！");
-		for ($i = 0; $i < 360; $i+=10) {
-			yield;
-			$pos = new Vector3($x + sin(deg2rad($i))**3 * 2 * 1, $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z );
-			$level->addParticle(new HeartParticle($pos));
-			$pos = new Vector3($x , $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z + sin(deg2rad($i))**3 * 2 * 1);
-			$level->addParticle(new HeartParticle($pos));
-			//$y += 0.1;
-
-		}
-	}
 }
 class TestTask extends Task {
 	/**

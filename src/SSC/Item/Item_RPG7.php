@@ -5,6 +5,7 @@ namespace SSC\Item;
 
 
 use pocketmine\item\Item;
+use SSC\Gun\GunManager;
 
 class Item_RPG7 implements SpaceServerItem {
 

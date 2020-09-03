@@ -59,7 +59,9 @@ use pocketmine\event\Listener;
 use SSC\Form\FishForm;
 use SSC\Gun\Bombing\BombingEvent;
 use SSC\Gun\Bombing\BombingTask;
+use SSC\Level\Particle\HeartCircleParticle;
 use SSC\main;
+use SSC\Task\EventGenerater;
 use xenialdan\apibossbar\BossBar;
 
 class KillDeathEvent implements Listener {
@@ -204,10 +206,10 @@ class KillDeathEvent implements Listener {
 				if ($tag->offsetExists("Saisana")) {
 					switch (mt_rand(1, 9)) {
 						case 1:
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->saisana($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->saisana($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
 							break;
 						case 2:
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->saisana2($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->saisana2($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
 							break;
 						case 3:
 						case 4:
@@ -532,7 +534,7 @@ class KillDeathEvent implements Listener {
 				if ($tag->offsetExists("Yurisi_Love")) {
 					if ($event->getEntity() instanceof Player) {
 						if ($event->getForce() == 3) {
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->yurisiBeam($event->getEntity())), 1);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->yurisiBeam($event->getEntity())), 1);
 						} else {
 							$pk = new TextPacket();
 							$pk->type = 4;
@@ -709,23 +711,13 @@ class KillDeathEvent implements Listener {
 					$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, 3, [], 0.5);
 					$player->attack($event);
 					$this->hitSound($entity);
-					main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->Heart($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
+					main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater(HeartCircleParticle::addMoveParticle($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
 					break 2;
 				}
 			}
 		}
 	}
 
-	public function Heart($x,$y,$z,$level){
-		for ($i = 0; $i < 360; $i+=10) {
-			yield;
-			$pos = new Vector3($x + sin(deg2rad($i))**3 * 2 * 1, $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z );
-			$level->addParticle(new HeartParticle($pos));
-			$pos = new Vector3($x , $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z + sin(deg2rad($i))**3 * 2 * 1);
-			$level->addParticle(new HeartParticle($pos));
-			//$y += 0.1;
-		}
-	}
 
 	public function hitSound(Player $player){
 		$pk2 = new PlaySoundPacket;
@@ -739,23 +731,4 @@ class KillDeathEvent implements Listener {
 	}
 }
 
-class Saisana1 extends Task {
-	/**
-	 * Actions to execute when run
-	 *
-	 * @return void
-	 */
-		public function __construct(\Generator $generator) {
-			$this->generator = $generator;
-		}
-
-		public function onRun(int $currentTick) {
-			if ($this->generator->valid()) {//yieldされていたら
-            $this->generator->next();//進む
-        } else {//yieldされなくなったら(一番下に行った=forを抜けたら)
-            $this->getHandler()->cancel();//タスクをキャンセル(終了)する
-        }
-
-		}
-}
 
