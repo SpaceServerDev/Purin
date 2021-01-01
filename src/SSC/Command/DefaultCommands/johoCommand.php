@@ -7,6 +7,7 @@ namespace SSC\Command\DefaultCommands;
 use pocketmine\command\CommandSender;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\utils\CommandException;
+use pocketmine\Player;
 use SSC\main;
 
 class johoCommand extends VanillaCommand {
@@ -16,10 +17,11 @@ class johoCommand extends VanillaCommand {
 	}
 
 	/**
+	 * @param Player $sender
+	 * @param string $commandLabel
 	 * @param string[] $args
 	 *
 	 * @return mixed
-	 * @throws CommandException
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		$playerdata=main::getPlayerData($sender->getName());

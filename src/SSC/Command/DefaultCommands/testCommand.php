@@ -40,6 +40,8 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
+use pocketmine\network\mcpe\protocol\FilterTextPacket;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
@@ -52,7 +54,10 @@ use SSC\Item\Item_AK47;
 use SSC\Item\Item_AWM;
 use SSC\Item\Item_RPG7;
 use SSC\Item\Item_UZI;
+use SSC\Item\RepairCream;
+use SSC\Level\Particle\HeartCircleParticle;
 use SSC\main;
+use SSC\Task\EventGenerater;
 
 class testCommand extends VanillaCommand {
 
@@ -75,6 +80,9 @@ class testCommand extends VanillaCommand {
 			$z = $sender->z;
 			$level = $sender->getPlayer()->getLevel();
 
+			$cls = new BombingEvent();
+			main::getMain()->getScheduler()->scheduleDelayedTask(new BombingTask($sender, $cls), 20);
+
 			var_dump($sender->getInventory()->getItemInHand()->getNamedTag());
 
 			$item=Item_AK47::get();
@@ -88,31 +96,26 @@ class testCommand extends VanillaCommand {
 
 			$item=Item_RPG7::get();
 			$sender->getInventory()->addItem($item);
-			//main::getMain()->getScheduler()->scheduleRepeatingTask(new TestTask($this->Bombing($x, $y, $z, $sender, $level)), 2);
+
+			$item=RepairCream::get(10);
+			$sender->getInventory()->addItem($item);
+
+			$item=RepairCream::get(10);
+			$item->getNamedTag()->setInt("Fish",1);
+			$sender->getInventory()->addItem($item);
+
+			$pk=new OnScreenTextureAnimationPacket();
+			$pk->effectId=27;
+			$sender->sendDataPacket($pk);
 		}
+
+
+		$player=$sender;
+		//main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater(HeartCircleParticle::addMoveParticle($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
 
 		return true;
 	}
 
-}
-class TestTask extends Task {
-	/**
-	 * Actions to execute when run
-	 *
-	 * @return void
-	 */
-		public function __construct(\Generator $generator) {
-			$this->generator = $generator;
-		}
-
-		public function onRun(int $currentTick) {
-			if ($this->generator->valid()) {//yieldされていたら
-            $this->generator->next();//進む
-        } else {//yieldされなくなったら(一番下に行った=forを抜けたら)
-            $this->getHandler()->cancel();//タスクをキャンセル(終了)する
-        }
-			//main::getMain()->getScheduler()->scheduleRepeatingTask(new particletask(), 1200);
-		}
 }
 
 

@@ -64,6 +64,11 @@ class WorldWarpCommand extends VanillaCommand {
 				$wn="ルールエリア";
 				$bool=false;
 			break;
+			case "pluto":
+				$world="pluto";
+				$wn="冥王星";
+				$bool=true;
+			break;
 			default:
 				$world="space";
 				$wn="ロビー";

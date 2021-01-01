@@ -56,6 +56,7 @@ class tpagreeCommand extends VanillaCommand {
 						} else {
 							$this->main->getServer()->getPlayer($tar)->sendMessage("[転送用AI] §b" . $sender->getName() . " は太陽にいるためワープできません");
 							$this->main->tpplayer[$name] = null;
+							return true;
 						}
 					} else {
 						$target->teleport(new Position($sender->getX(), $sender->getY(), $sender->getZ(), $level));

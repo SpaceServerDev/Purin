@@ -24,7 +24,7 @@ class JumpEvent implements Listener {
 					return false;
 				}
 			}
-			$pos = $player->getLocation()->multiply(0, 0.05, 0);
+			$pos = $player->getLocation()->multiply(0,0.5,0);
 			$pos->y = 1.3;
 			$player->setMotion($pos);
 		} elseif ($player->getLevel()->getFolderName() == "mars") {
@@ -35,8 +35,19 @@ class JumpEvent implements Listener {
 					return false;
 				}
 			}
-			$pos = $player->getLocation()->multiply(0, 0.05, 0);
+			$pos = $player->getLocation()->multiply(0,0.5,0);
 			$pos->y = 0.6;
+			$player->setMotion($pos);
+		} elseif ($player->getLevel()->getFolderName() == "moon") {
+			$armor = $player->getArmorInventory();
+			$item = $armor->getBoots();
+			if ($item->getId() === 305) {
+				if ($item->getCustomName() === "§b重力制御装置") {
+					return false;
+				}
+			}
+			$pos = $player->getLocation()->multiply(0,0.5,0);
+			$pos->y = 1;
 			$player->setMotion($pos);
 		}
 		return true;

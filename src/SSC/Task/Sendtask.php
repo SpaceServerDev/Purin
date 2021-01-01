@@ -193,9 +193,7 @@ class Sendtask extends Task{
 			$b = $leveltable - $zero;
 			$keiken = $a / $b;
 			$bar = $playerdata->getBossbar();
-			$bar->setTitle("経験値 {$exp} / {$leveltable}");
-			$bar->setSubTitle("名前:{$name} レベル:{$level}");
-			$bar->setPercentage($keiken);
+			$bar->setTitle("経験値 {$exp} / {$leveltable}")->setSubTitle("名前:{$name} レベル:{$level}")->setPercentage($keiken);
 		}
 
 	function setupData(Player $player){

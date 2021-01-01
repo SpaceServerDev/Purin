@@ -6,6 +6,6 @@ use pocketmine\level\Level;
 
 interface SpaceServerParticle {
 
-	public static function add($x,$y,$z,Level $level);
+	public static function add($x,$y,$z,Level $level,int $direction=0);
 
 }

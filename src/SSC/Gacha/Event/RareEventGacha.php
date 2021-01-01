@@ -23,7 +23,7 @@ class RareEventGacha implements Gacha {
 				$item = Item::get(322, 1, 15);
 				return [$item,2,"§aエンチャント金りんご"];
 			case 5:
-				$item = Item::get(388, 0, 64);
+				$item = Item::get(388, 0, 16);
 				return [$item,2,"§aエメラルド"];
 			case 6:
 				$item = Item::get(396, 0, 12);

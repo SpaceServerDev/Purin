@@ -43,7 +43,7 @@ class XRay implements Listener {
 			if ($this->isEndTimer($event->getPlayer()->getName())) {
 				if ($this->isTarget($event->getPlayer()->getName())) {
 					main::getMain()::getPlayerData($event->getPlayer()->getName())->addXrayCount();
-					if (main::getMain()::getPlayerData($event->getPlayer()->getName())->getXrayCount() > 3) {
+					if (main::getMain()::getPlayerData($event->getPlayer()->getName())->getXrayCount() > 2) {
 						$event->setCancelled();
 						$this->reset($event->getPlayer()->getName());
 						$cid = main::getMain()->playerlist->get($event->getPlayer()->getName());

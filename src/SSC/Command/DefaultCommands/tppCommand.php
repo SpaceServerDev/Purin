@@ -32,19 +32,23 @@ class tppCommand extends VanillaCommand {
 		if($sender instanceof Player) {
 			if (isset($args[0])) {
 				$name = $sender->getName();
-				$bname = $sender->getName();
 				if ($target = $sender->getServer()->getPlayer($args[0])) {
 					$targetname = $sender->getServer()->getPlayer($args[0])->getName();
-					$btargetname = $sender->getServer()->getPlayer($args[0])->getName();
+					if($target->getLevel()->getFolderName()==="sun"){
+						if(!main::getPlayerData($name)->isSun()){
+							$sender->sendMessage("[転送用AI]§a相手は太陽にいますが、あなたは太陽に行くチケットを未所持のため送信できませんでした。");
+							return true;
+						}
+					}
 					if ($targetname === $sender->getName()) {
 						$sender->sendMessage("[転送用AI]§a自分にリクエストを送信することはできません。");
 						return true;
 					}
 					if (!isset($this->main->tpplayer[$targetname])) {
-						$this->main->getServer()->getPlayer($args[0])->sendMessage("[転送用AI]§d" . $bname . " §bはあなたにテレポートしたいようです.");
+						$this->main->getServer()->getPlayer($args[0])->sendMessage("[転送用AI]§d" . $name . " §bはあなたにテレポートしたいようです.");
 						$this->main->getServer()->getPlayer($args[0])->sendMessage("[転送用AI] /tpagree§dとチャット欄に打てば承認することができます");
 						$this->main->getServer()->getPlayer($args[0])->sendMessage("[転送用AI] /tpdis §dとチャット欄に打てば拒否することができます");
-						$sender->sendMessage("[転送用AI] §r§bリクエストを §a" . $btargetname . "§bに送信しました");
+						$sender->sendMessage("[転送用AI] §r§bリクエストを §a" . $targetname . "§bに送信しました");
 						$this->main->tpplayer[$targetname] = $name;
 						return true;
 					} else {

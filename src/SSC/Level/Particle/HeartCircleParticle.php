@@ -8,7 +8,7 @@ use pocketmine\math\Vector3;
 
 class HeartCircleParticle implements SpaceServerParticle {
 
-	public static function add($x,$y,$z,Level $level){
+	public static function add($x,$y,$z,Level $level,int $direction=0){
 		for ($i = 0; $i < 360; $i+=10) {
 			$pos = new Vector3($x + sin(deg2rad($i))**3 * 2 * 1, $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z );
 			$level->addParticle(new HeartParticle($pos));

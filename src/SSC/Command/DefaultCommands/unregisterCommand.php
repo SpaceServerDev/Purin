@@ -15,7 +15,7 @@ class unregisterCommand extends VanillaCommand {
 
 
 	public function __construct() {
-		parent::__construct("unregister","","/unregister");
+		parent::__construct("unregister", "", "/unregister");
 	}
 
 	/**
@@ -25,7 +25,7 @@ class unregisterCommand extends VanillaCommand {
 	 * @throws CommandException
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
-		if($sender->isOp()) {
+		if ($sender->isOp()) {
 			if (!isset($args[0])) {
 				return false;
 			}
@@ -39,8 +39,6 @@ class unregisterCommand extends VanillaCommand {
 				if ($player instanceof Player) {
 					$player->kick("[管理AI]§cログインしなおしてください", false);
 				}
-				main::getMain()->password->remove($aitename);
-				main::getMain()->password->save();
 				main::getMain()->playerlist->reload();
 				main::getMain()->playerlist->remove($aitename);
 				main::getMain()->playerlist->save();
@@ -48,13 +46,6 @@ class unregisterCommand extends VanillaCommand {
 			} else {
 				$sender->sendMessage("[管理AI]§a" . $aitename . "§fは存在しません");
 			}
-		}else{
-			main::getMain()->password->remove($sender->getName());
-				main::getMain()->password->save();
-				main::getMain()->playerlist->reload();
-				main::getMain()->playerlist->remove($sender->getName());
-				main::getMain()->playerlist->save();
-				$sender->kick("[管理AI]§cパスワードをリセットしました。ログインしなおしてください", false);
 		}
 		return true;
 	}

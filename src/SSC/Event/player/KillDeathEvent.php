@@ -4,6 +4,7 @@ namespace SSC\Event\player;
 
 use pocketmine\entity\Human;
 use pocketmine\entity\Tamable;
+use pocketmine\inventory\BaseInventory;
 use pocketmine\level\Explosion;
 use pocketmine\level\Level;
 use pocketmine\level\particle\AngryVillagerParticle;
@@ -60,6 +61,8 @@ use SSC\Form\FishForm;
 use SSC\Gun\Bombing\BombingEvent;
 use SSC\Gun\Bombing\BombingTask;
 use SSC\Level\Particle\HeartCircleParticle;
+use SSC\Level\Particle\ShootBowCircleParticle;
+use SSC\Level\Particle\SlashEffectParticle;
 use SSC\main;
 use SSC\Task\EventGenerater;
 use xenialdan\apibossbar\BossBar;
@@ -150,7 +153,7 @@ class KillDeathEvent implements Listener {
 					if(!$damager->isOp()){
 						if($entity->namedtag->offsetExists("pet")){
 							if($entity->namedtag->getString("pet")!=$damager->getName()){
-								if($entity->getLevel()->getFolderName()!=="pvp") {
+								if($entity->getLevel()->getFolderName()!=="pvp" and $entity->getLevel()->getFolderName()!=="moon") {
 									$event->setCancelled();
 									$damager->sendMessage("[{$entity->namedtag->getString("pet")}のぺっと]やめてくだひゃい>< いたいめぅ");
 									return true;
@@ -176,11 +179,24 @@ class KillDeathEvent implements Listener {
 
 			if ($event->getEntity() instanceof Player && $event->getDamager() instanceof Player) {
 				$map = $event->getEntity()->getLevel()->getFolderName();
-				if ($map != "pvp") {
+				if ($map != "pvp" and $map != "moon") {
 					$event->setCancelled();
 					$this->otikp[$event->getEntity()->getName()] = null;
 					return true;
 				}
+
+				if($map==="moon") {
+					$entdata = main::getPlayerData($event->getEntity()->getName());
+					$dmgdata = main::getPlayerData($event->getDamager()->getName());
+					if ($entdata->getClan() === $dmgdata->getClan()) {
+						if($entdata->getClan()!="") {
+							$event->setCancelled();
+							return true;
+						}
+					}
+				}
+
+				/** @var  $hand Item*/
 				$hand = $event->getDamager()->getInventory()->getItemInHand();
 				$tag = $hand->getNamedTag();
 				$name = $hand->getCustomName();
@@ -192,7 +208,7 @@ class KillDeathEvent implements Listener {
 					$y = $event->getEntity()->y;
 					$z = $event->getEntity()->z;
 					$pk->position = new Vector3($x, $y, $z);
-					$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk);
+					$this->Main->getServer()->broadcastPacket($event->getEntity()->getLevel()->getPlayers(), $pk);
 					$pk2 = new PlaySoundPacket;
 					$pk2->soundName = "random.explode";
 					$pk2->x = $event->getEntity()->x;
@@ -200,7 +216,7 @@ class KillDeathEvent implements Listener {
 					$pk2->z = $event->getEntity()->z;
 					$pk2->volume = 0.5;
 					$pk2->pitch = 1;
-					$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk2);
+					$this->Main->getServer()->broadcastPacket($event->getEntity()->getLevel()->getPlayers(), $pk2);
 					$event->getEntity()->attack(new EntityDamageEvent($event->getEntity(), EntityDamageEvent::CAUSE_ENTITY_ATTACK, 2));
 				}
 				if ($tag->offsetExists("Saisana")) {
@@ -220,6 +236,10 @@ class KillDeathEvent implements Listener {
 					}
 
 				}
+				if($tag->offsetExists("DevilSword")){
+					SlashEffectParticle::add($event->getEntity()->x,$event->getEntity()->y,$event->getEntity()->z,$event->getEntity()->getLevel(),$damager->getDirection());
+				}
+
 			}
 		}
 		return true;
@@ -230,6 +250,10 @@ class KillDeathEvent implements Listener {
 		$player = $event->getPlayer();
 		$name = $player->getName();
 		$event->setKeepInventory(true);
+		if($event->getPlayer()->getLevel()->getName()==="moon"){
+			$event->setKeepInventory(false);
+		}
+
 		if ($player->getGamemode() == 0) {
 			$player->setAllowFlight(false);
 		}
@@ -262,7 +286,7 @@ class KillDeathEvent implements Listener {
 							}
 						}
 						foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-							if ($player->getLevel()->getFolderName() === "pvp" or $player->getName() == $name) {
+							if ($player->getLevel()->getFolderName() === "pvp" or $player->getLevel()->getFolderName() === "moon" or $player->getName() == $name) {
 								switch (mt_rand(1, 4)) {
 									case 1:
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- で殺害しました §e({$playerdata->getKillst()}キルストリーク)");
@@ -311,7 +335,7 @@ class KillDeathEvent implements Listener {
 							}
 						}
 						foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-							if ($player->getLevel()->getFolderName() === "pvp" or $player->getName() == $name) {
+							if ($player->getLevel()->getFolderName() === "pvp" or $player->getLevel()->getFolderName() === "moon" or $player->getName() == $name) {
 								switch (mt_rand(1, 4)) {
 									case 1:
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- で射抜きました §e({$playerdata->getKillst()}キルストリーク)");
@@ -524,11 +548,11 @@ class KillDeathEvent implements Listener {
 
 	public function onShoot(EntityShootBowEvent $event) {
 		if($event->getEntity() instanceof Player) {
-			$pworld = $event->getEntity()->getLevel();
-			$world = $this->Main->getServer()->getLevelByName("pvp");
-			if ($pworld != $world) {
+			$pworld = $event->getEntity()->getLevel()->getFolderName();
+			$world = $this->Main->getServer()->getLevelByName("pvp")->getFolderName();
+			$world2 = $this->Main->getServer()->getLevelByName("moon")->getFolderName();
+			if ($pworld !== $world and $pworld !== $world2) {
 				$event->setCancelled();
-				$event->getEntity()->sendMessage("[管理AI]§4PVPエリアで撃てるようになります");
 			} else {
 				$tag = $event->getBow()->getNamedTag();
 				if ($tag->offsetExists("Yurisi_Love")) {
@@ -581,6 +605,13 @@ class KillDeathEvent implements Listener {
 				} elseif ($event->getEntity()->getInventory()->getItemInHand()->getCustomName() == "§d♡キューピットの弓♡") {
 					$this->heart[$event->getEntity()->getName()] = 1;
 				}
+				if ($event->getEntity() instanceof Player) {
+					if ($event->getForce() == 3) {
+						if ($tag->offsetExists("DevilBow")) {
+							ShootBowCircleParticle::add($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $event->getEntity()->getLevel(), $event->getEntity()->getDirection());
+						}
+					}
+				}
 			}
 		}
 	}
@@ -602,7 +633,7 @@ class KillDeathEvent implements Listener {
 							$pk2->z = $event->getEntity()->z;
 							$pk2->volume = 0.5;
 							$pk2->pitch = 1;
-							$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk2);
+							$this->Main->getServer()->broadcastPacket()($attacker->getLevel()->getPlayers(), $pk2);
 							$event->getEntityHit()->attack(new EntityDamageEvent($damager, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 5));
 							$this->hanabi[$attacker->getName()] = 0;
 						} else {

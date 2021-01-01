@@ -209,7 +209,7 @@ class GunEvent implements Listener {
 			if (!$entity->level->getBlock($pos)->canBeFlowedInto()){
 				$explosion = new Explosion(new Position($pos->x,$pos->y,$pos->z,$entity->getLevel()), 1);
 				$explosion->explodeB();
-				$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.7);
+				$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.4);
 				break;
 			}
 			$particle->setComponents($pos->x, $pos->y, $pos->z);
@@ -218,17 +218,17 @@ class GunEvent implements Listener {
 				if ($player->distance($pos) < 1.5 && $entity !== $player) {
 					$explosion = new Explosion(new Position($pos->x,$pos->y,$pos->z,$entity->getLevel()), 1);
 					$explosion->explodeB();
-					$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.7);
+					$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.4);
 					break 2;
 				}
 			}
 		}
 		$explosion = new Explosion(new Position($pos->x,$pos->y,$pos->z,$entity->getLevel()), 1);
 		$explosion->explodeB();
-		$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.7);
+		$this->sound("music.bomb2",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel(),0.4);
 	}
 
-	public function sound(string $name,$x,$y,$z,Level $level,$vol=0.5){
+	public function sound(string $name,$x,$y,$z,Level $level,$vol=0.3){
 		$pk2 = new PlaySoundPacket;
 		$pk2->soundName = $name;
 		$pk2->x = $x;
@@ -239,7 +239,7 @@ class GunEvent implements Listener {
 		Server::getInstance()->broadcastPacket($level->getPlayers(),$pk2);
 	}
 
-	public function playerSound(string $name,Player $player,$vol=0.5){
+	public function playerSound(string $name,Player $player,$vol=0.3){
 		$pk2 = new PlaySoundPacket;
 		$pk2->soundName = $name;
 		$pk2->x = $player->x;

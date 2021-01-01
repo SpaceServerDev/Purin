@@ -337,14 +337,14 @@ Class ItemData{
 		"ID" => 21,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリ鉱石",
-		"PRICE" => 300
+		"PRICE" => 500
 	];
 
 	const Lapis_Block = [
 		"ID" => 22,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリのブロック",
-		"PRICE" => 2700
+		"PRICE" => 4500
 	];
 
 	const Dispenser = [
@@ -771,14 +771,14 @@ Class ItemData{
 		"ID" => 41,
 		"DAMAGE" => 0,
 		"NAME" => "金のブロック",
-		"PRICE" => 7200
+		"PRICE" => 10000
 	];
 
 	const Iron_Block = [
 		"ID" => 42,
 		"DAMAGE" => 0,
 		"NAME" => "鉄のブロック",
-		"PRICE" => 2700
+		"PRICE" => 3500
 	];
 
 	const Double_Stone_Slab_down = [
@@ -1035,7 +1035,7 @@ Class ItemData{
 		"ID" => 57,
 		"DAMAGE" => 0,
 		"NAME" => "ダイヤモンドブロック",
-		"PRICE" => 27000
+		"PRICE" => 35000
 	];
 
 	const Crafting_Table = [
@@ -1636,7 +1636,7 @@ Class ItemData{
 		"ID" => 133,
 		"DAMAGE" => 0,
 		"NAME" => "エメラルドブロック",
-		"PRICE" => 3600
+		"PRICE" => 5000
 	];
 
 	const Spruce_Stairs = [

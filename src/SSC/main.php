@@ -37,6 +37,7 @@ use SSC\Command\BaseCommandMap;
 use SSC\Core\version;
 use SSC\Data\FishSizeConfig;
 use SSC\Data\RankConfig;
+use SSC\Data\VirtualStorageConfig;
 use SSC\Entity\PatimonEntity;
 use SSC\Event\Altay\FishEvent;
 use SSC\Event\Block\BreakEvent;
@@ -64,11 +65,8 @@ use bboyyu51\pmdiscord\structure\Content;
 use SSC\Command\AllCommands;
 
 use SSC\Data\ItemData;
-use SSC\Gun\AR\AK47;
-use SSC\Gun\Gun;
 use SSC\Gun\GunEvent;
 use SSC\Gun\GunManager;
-use SSC\Item\SpaceServerItemFactory;
 use SSC\Task\RebootTask;
 
 
@@ -124,7 +122,7 @@ class main extends PluginBase implements Listener {
 	public $economyAPI;
 
 	/**
-	 * @var $log Config
+	 * @var $log \SQLite3
 	 */
 	public $log;
 
@@ -189,13 +187,19 @@ class main extends PluginBase implements Listener {
 	public $fishsize;
 
 	/**
-	 * @var RankConfig
-	 */
-	public $rank;
-	/**
 	 * @var GunManager
 	 */
 	private $GunManager;
+
+	/**
+	 * @var \SQLite3
+	 */
+	private $vs;
+
+	/**
+	 * @var Config
+	 */
+	public $otosidama;
 
 
 	public function onEnable() {
@@ -234,6 +238,8 @@ class main extends PluginBase implements Listener {
 		Server::getInstance()->loadLevel("Blackhole");
 		Server::getInstance()->loadLevel("trappist-1e");
 		Server::getInstance()->loadLevel("mars");
+		Server::getInstance()->loadLevel("moon");
+		Server::getInstance()->loadLevel("pluto");
 	}
 
 	private static function setTime(){
@@ -297,6 +303,7 @@ class main extends PluginBase implements Listener {
 		if (!(file_exists($this->getDataFolder() . "LevelBonus"))) @mkdir($this->getDataFolder() . "LevelBonus", 0755, true);
 		if (!(file_exists($this->getDataFolder() . "Fish"))) @mkdir($this->getDataFolder() . "Fish", 0755, true);
 		if (!(file_exists($this->getDataFolder() . "Rank"))) @mkdir($this->getDataFolder() . "Rank", 0755, true);
+		if (!(file_exists($this->getDataFolder() . "VS"))) @mkdir($this->getDataFolder() . "VS", 0755, true);
 		$this->playerlist = new Config($this->getDataFolder() . "player.yml", Config::YAML, array());
 		$this->banlist = new Config($this->getDataFolder() . "cban.yml", Config::YAML, array());
 		$this->blacklist = new Config($this->getDataFolder() . "ban.yml", Config::YAML);
@@ -309,12 +316,20 @@ class main extends PluginBase implements Listener {
 		$this->levelbonus = new Config($this->getDataFolder() . "LevelBonus" . "/levelbonus.yml", Config::YAML, array("10" => array(), "50" => array(), "80" => array(), "100" => array(), "150" => array(), "200" => array(), "250" => array(), "300" => array(), "350" => array(), "400" => array(), "450" => array(), "500" => array(),));
 		$this->fishsize = new FishSizeConfig();
 		$this->npc = new Config($this->getDataFolder() . "spawn.yml", Config::YAML);
+		$this->otosidama = new Config($this->getDataFolder() . "2021.yml", Config::YAML);
 		if(!file_exists($this->getDataFolder() . "log.db")){
 			$this->log = new \SQLite3($this->getDataFolder() . "log.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
 		}else{
 			$this->log = new \SQLite3($this->getDataFolder() . "log.db", SQLITE3_OPEN_READWRITE);
 		}
 		$this->log->query("CREATE TABLE IF NOT EXISTS logdata (xyz TEXT PRIMARY KEY, who TEXT , action TEXT, time TEXT, id INT,meta INT)");
+
+		/*if(!file_exists(main::getMain()->getDataFolder() . "VS.db")){
+			$this->vs = new \SQLite3(main::getMain()->getDataFolder()  . "VS.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+		}else{
+			$this->vs = new \SQLite3(main::getMain()->getDataFolder()  . "VS.db", SQLITE3_OPEN_READWRITE);
+		}*/
+
 	}
 
 	private function spawnEntity(){
@@ -408,14 +423,15 @@ class main extends PluginBase implements Listener {
 	public static function isOres(Player $player,PlayerEvent $playerdata){
 	 	 $ores=$playerdata->getVar("COAL")+$playerdata->getVar("LAPIS")+$playerdata->getVar("IRON")+$playerdata->getVar("REDSTONE")+$playerdata->getVar("GOLD")+$playerdata->getVar("DIAMOND")+$playerdata->getVar("EMERALD");
 		 if($ores===10000or$ores===50000){
-		 	$player->addTitle("実績を達成", "§a鉱石を{$playerdata->getVar("ORE")}個集めた！", 30, 30, 20);
+		 	$player->sendTitle("実績を達成", "§a鉱石を{$playerdata->getVar("ORE")}個集めた！", 30, 30, 20);
 		 }
 	}
 
 	public function addEXP(Player $player, int $number) {
 		$name = $player->getName();
 		$playerdata=self::getPlayerData($name);
-		switch ($playerdata->isLevelup($number)) {
+		$lu=$playerdata->isLevelup($number);
+		switch ($lu) {
 			case 0:
 				return;
 			case 1:
@@ -541,8 +557,8 @@ class main extends PluginBase implements Listener {
 	}
 
 	public function registerRanking(PlayerEvent $pe){
-		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level"];
-		$var=["STAY","DAY","MAXREPEAT","BREAK","PEACE","TRAPPIST","FLOWER","WOOD","GACHA","SHOPPING","SLOT","KILL","MAXKILLSTREAK","FISH","COAL","LAPIS","IRON","REDSTONE","GOLD","DIAMOND","EMERALD","LEVEL"];
+		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level","spaceshipsize"];
+		$var=["STAY","DAY","MAXREPEAT","BREAK","PEACE","TRAPPIST","FLOWER","WOOD","GACHA","SHOPPING","SLOT","KILL","MAXKILLSTREAK","FISH","COAL","LAPIS","IRON","REDSTONE","GOLD","DIAMOND","EMERALD","LEVEL","SPACESHIP_SIZE"];
 		for($i=0;$i<count($configname);$i++){
 			$stay=new RankConfig($this->getDataFolder()."Rank/{$configname[$i]}.yml");
 			$stay->set($pe->getName(),$pe->getVar($var[$i]));
@@ -551,6 +567,10 @@ class main extends PluginBase implements Listener {
 		$login=new RankConfig($this->getDataFolder()."Rank/money.yml");
 		$login->set($pe->getName(),EconomyAPI::getInstance()->myMoney($pe->getName()));
 		$login->save();
+	}
+
+	public function getVirtualStorage():\SQLite3{
+		return $this->vs;
 	}
 
 

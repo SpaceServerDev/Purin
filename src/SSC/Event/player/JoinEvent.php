@@ -94,7 +94,7 @@ class JoinEvent implements Listener {
 		/*
 		   * 入室メッセージの管理
 		   */
-		if (!main::getMain()->password->exists($name)) {
+		if (!main::getMain()->playerlist->exists($name)) {
 			$event->setJoinMessage("§a[入室] §a§l 初in §r§bの§c" . $name . "§b様が§a§lオンライン§r§bになりました");
 		} else {
 			if ($name === "yurisi") {
@@ -161,26 +161,14 @@ class JoinEvent implements Listener {
 		main::getMain()->playerlist->reload();
 		$name = $player->getName();
 		$ip = $player->getAddress();
-		if (!main::getMain()->password->exists($name)) {
+		if (!main::getMain()->playerlist->exists($name)) {
 			$player->setImmobile(true);
 			$player->sendForm(new RegisterForm());
 		} else {
-			if (!main::getMain()->playerlist->exists($name)) {
-				//$player->sendForm(new ReloginForm());
-				//main::getMain()->login[$name] = 1;
-				//$player->setImmobile(true);
-				//return true;
-			} else {
-				if ($playerdata->getIP() == $ip && main::getMain()->playerlist->get($name)==(string)$player->getUniqueId()->toString()) {
-					Server::getInstance()->dispatchCommand($player, "info");
-				} else {
-					//$player->sendForm(new ReloginForm());
-					//main::getMain()->login[$name] = 1;
-					//$player->setImmobile(true);
-				}
+			Server::getInstance()->dispatchCommand($player, "info");
 
-			}
 		}
+
 		if($playerdata->getPerm()!="OP" and $playerdata->getPerm()!="オーナー"){
 			main::getMain()->registerRanking($playerdata);
 		}

@@ -5,6 +5,13 @@ namespace SSC\Command;
 
 
 use Pocketmine\Server;
+use SSC\Command\DefaultCommands\eventitemCommand;
+use SSC\Command\DefaultCommands\expertmodeCommand;
+use SSC\Command\DefaultCommands\moonCommand;
+use SSC\Command\DefaultCommands\naviCommand;
+use SSC\Command\DefaultCommands\otosidamaCommand;
+use SSC\Command\DefaultCommands\plutoCommand;
+use SSC\Command\DefaultCommands\spaceshipCommand;
 use SSC\Command\DefaultCommands\tradeCommand;
 use SSC\Command\DefaultCommands\advancemodeCommand;
 use SSC\Command\DefaultCommands\calcCommand;
@@ -69,6 +76,7 @@ class BaseCommandMap {
 	const pm="pocketmine";
 
 	public static function init(main $main) {
+		if(version::DEV_VERSION) Server::getInstance()->getCommandMap()->register(self::pm, new testCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new xyzCommand("xyz"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new respawnCommand("respawn"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new spaceCommand("space"));
@@ -135,12 +143,18 @@ class BaseCommandMap {
 		Server::getInstance()->getCommandMap()->register(self::pm, new xtpCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new spCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new saddleCommand());
-		Server::getInstance()->getCommandMap()->register(self::pm,new loginbonusCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm, new loginbonusCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new keikokuCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new gachaticketCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new tradeCommand());
-		if(version::DEV_VERSION) {
-			Server::getInstance()->getCommandMap()->register(self::pm, new testCommand());
-		}
+		Server::getInstance()->getCommandMap()->register(self::pm ,new eventitemCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm ,new expertmodeCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new spaceshipCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new naviCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new moonCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new plutoCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new otosidamaCommand());
+
+
 	}
 }

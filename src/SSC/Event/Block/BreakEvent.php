@@ -388,6 +388,13 @@ class BreakEvent implements Listener {
 							$this->main->addEXP($player, 1);
 						}
 						 break;
+					 case 168:
+					 	if($player->getLevel()->getFolderName()=="pluto") {
+							$this->main->addEXP($player, 10);//青いやつ
+						}else{
+							$this->main->addEXP($player, 2);
+						}
+					 	break;
 					 default:
 						 $this->main->addEXP($player, 1);
 						 break;
@@ -420,6 +427,9 @@ class BreakEvent implements Listener {
 				 	if($player->getLevel()->getFolderName()=="sun") {
 						if ($event->getBlock()->getId() == 87) {
 							economyAPI::getInstance()->addMoney($name, 6);
+						}
+						if ($event->getBlock()->getId() == 168) {
+							economyAPI::getInstance()->addMoney($name, 10);
 						}
 					}
 				 } else if ($playerdata->getJob() == "農家") {

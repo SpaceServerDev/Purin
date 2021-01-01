@@ -11,7 +11,10 @@ class version {
 	const NAME="Purin";
 
 	const VERSION_INFO="1.2";
-	const DEV_VERSION=true;
+
+	const SEASON=2;
+
+	const DEV_VERSION=false;
 
 	const AA_1=("  #####                               #####                                      #####                       ");
 	const AA_2=(" #     # #####    ##    ####  ###### #     # ###### #####  #    # ###### #####  #     #  ####  #####  ###### ");

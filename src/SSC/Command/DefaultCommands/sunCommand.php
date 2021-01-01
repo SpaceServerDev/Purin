@@ -34,5 +34,6 @@ class sunCommand extends VanillaCommand {
 				$sender->sendMessage("[宇宙船]§a未開放のワールドです\n[宇宙船]§aチケットを集めて開放しましょう！");
 			}
 		}
+		return true;
 	}
 }

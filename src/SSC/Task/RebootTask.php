@@ -81,7 +81,7 @@ class RebootTask extends Task{
 			$this->Main->getServer()->broadcastTip("[管理AI]§c§lすべてのアイテム({$amount}個)を掃除いたしました。");
 
 
-			switch (mt_rand(1, 17)) {
+			switch (mt_rand(1, 18)) {
 				case 1:
 					$this->Main->getServer()->broadcastMessage("§a§lアナウンス>> コマンドがわからなくなったら/cmdを見てみよう！");
 					break;
@@ -132,6 +132,9 @@ class RebootTask extends Task{
 					break;
 				case 17:
 					$this->Main->getServer()->broadcastMessage("§a§lアナウンス>> シルクタッチ付きの道具は経験値、お金は入りません");
+					break;
+				case 18:
+					$this->Main->getServer()->broadcastMessage("§a§lアナウンス>> 釣った魚は/townで納品しよう");
 					break;
 			}
 			$this->Thunder();
@@ -186,6 +189,10 @@ class RebootTask extends Task{
 		}else if($this->Main->seconds%5==0){
 			foreach (Server::getInstance()->getOnlinePlayers() as $player){
 				main::getPlayerData($player->getName())->resetNukeCount();
+			}
+		}else if($this->Main->seconds%100==0){
+			foreach (Server::getInstance()->getOnlinePlayers() as $player){
+				main::getPlayerData($player->getName())->getBossbar()->removePlayer($player);
 			}
 		}
 
@@ -256,9 +263,12 @@ class RebootTask extends Task{
 				case 20:
 					$rname=["diamond","ダイヤモンド","個"];
 				break;
+				case 21:
+					$rname=["spaceshipsize","宇宙船サイズ",""];
+				break;
 			}
 			self::Text($rname[0],$rname[1],$rname[2]);
-			if($this->rank==20){
+			if($this->rank==21){
 				$this->rank=0;
 			}else{
 				$this->rank++;

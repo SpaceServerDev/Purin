@@ -7,6 +7,7 @@ namespace SSC\Form;
 use pocketmine\form\Form;
 use pocketmine\Player;
 use pocketmine\Server;
+use SSC\Core\version;
 use SSC\Form\InfoForm\marsInfomation;
 use SSC\Form\InfoForm\UpdateInfomationForm;
 use SSC\main;
@@ -55,6 +56,8 @@ class InformationForm implements Form {
 	 * @since 5.4.0
 	 */
 	public function jsonSerialize() {
+		$SpaceDay="";
+		if(idate("j")%5===0) $SpaceDay="§b今日は宇宙の日です！\n宇宙の経験値ではもらえる経験値が普段の2倍になります！\n5の倍数の日が宇宙の日です！";
 		$buttons = [
 			['text' => "ログインボーナスへ",
 				'image' => [
@@ -91,7 +94,7 @@ class InformationForm implements Form {
 		return [
 			'type'=>'form',
 			'title'=>"§a§lSPACESERVER INFO",
-			'content'=>"§aようこそ宇宙サーバーへ！\n§a現在のイベントです。詳しく見たい広告をタッチしてください",
+			'content'=>"§aようこそ宇宙サーバー シーズン".version::SEASON."へ！\n{$SpaceDay}\n§a現在のイベントです。詳しく見たい広告をタッチしてください",
 			'buttons'=>$buttons
 		];
 	}
