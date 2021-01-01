@@ -79,7 +79,8 @@ class SecretaryForm implements Form {
 				Server::getInstance()->dispatchCommand($player,"syo");
 			break;
 			case 17:
-				Server::getInstance()->dispatchCommand($player,"option");
+				//Server::getInstance()->dispatchCommand($player,"option");
+				$player->sendMessage("[管理AI]未実装の項目です。");
 			break;
 		}
 	}
