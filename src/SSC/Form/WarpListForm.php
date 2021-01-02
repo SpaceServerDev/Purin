@@ -22,51 +22,8 @@ class WarpListForm implements Form {
 		if(!is_numeric($data)){
 			return;
 		}
-		switch ($data) {
-			case 0:
-				$cmd = "spawn";
-				break;
-			case 1:
-				$cmd = "space 1";
-				break;
-			case 2:
-				$cmd = "earth";
-				break;
-			case 3:
-				$cmd = "flat";
-				break;
-			case 4:
-				$cmd = "respawn";
-				break;
-			case 5:
-				$cmd = "pvp 1";
-				break;
-			case 6:
-				$cmd = "rule";
-				break;
-			case 7:
-				$cmd = "taucetuse";
-				break;
-			case 8:
-				$cmd = "taucetusf";
-				break;
-			case 9:
-				$cmd = "neptune";
-				break;
-			case 10:
-				$cmd = "mars";
-				break;
-			case 11:
-				$cmd = "sun";
-				break;
-			case 12:
-				$cmd = "blackhole";
-				break;
-			case 13:
-				$cmd = "trappist-1e";
-				break;
-		}
-		main::getMain()->getServer()->dispatchCommand($player, $cmd);
+		$cmd=["spawn","space 1","earth","flat","respawn","pvp 1","rule","taucetuse","taucetusf","neptune","mars","sun","moon","pluto","blackhole","trappist-1e"];
+		main::getMain()->getServer()->dispatchCommand($player, $cmd[$data]);
 	}
 
 	/**
@@ -90,6 +47,8 @@ class WarpListForm implements Form {
 			['text' => "海王星",],
 			['text' => "火星",],
 			['text' => "太陽",],
+			['text' => "月",],
+			['text' => "冥王星",],
 			['text' => "ブラックホール",],
 			['text' => "トラピスト1星e",],
 		];

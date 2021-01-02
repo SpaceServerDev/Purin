@@ -69,6 +69,13 @@ class BreakEvent implements Listener {
 		 $damage = $event->getBlock()->getDamage();
 		 main::getMain()->registerlog($x,$y,$z,$world,$id,$damage,$player,"b");
 
+		 if($player->getLevel()->getFolderName()==="pluto"){
+			if(!$playerdata->isExpertLevel()){
+				$event->setCancelled();
+				return true;
+			}
+		 }
+
 		 /*
 		  * 整地ワールド
 		  */

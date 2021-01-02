@@ -87,9 +87,10 @@ class KillDeathEvent implements Listener {
 	private $kpn;
 
 	/*
- * キルしたプレイヤーのディスプレイネーム
- */
+	 * キルしたプレイヤーのディスプレイネーム
+	 */
 	private $kp;
+
 	/*
  	* キルしたプレイヤーのディスプレイネーム
  	*/
@@ -244,14 +245,11 @@ class KillDeathEvent implements Listener {
 							$damager->addEffect(new EffectInstance(Effect::getEffect(2), 60, 1, true));
 							$damager->addEffect(new EffectInstance(Effect::getEffect(15), 60, 10, true));
 							break;
-
 					}
-
 				}
 				if($tag->offsetExists("DevilSword")){
 					SlashEffectParticle::add($event->getEntity()->x,$event->getEntity()->y,$event->getEntity()->z,$event->getEntity()->getLevel(),$damager->getDirection());
 				}
-
 			}
 		}
 		return true;
@@ -272,7 +270,6 @@ class KillDeathEvent implements Listener {
 		if ($event->getEntity() instanceof Player and $event->getPlayer() instanceof Player) {
 			switch ($this->kc) {
 				case 1:
-
 					$item = $this->ki;
 					$killer = $this->kp;
 					$kil = $this->kpn;
@@ -289,8 +286,8 @@ class KillDeathEvent implements Listener {
 							$playerdata = $this->Main->getPlayerData($kil);
 							$ki = $this->Main->getServer()->getPlayer($kil);
 							$this->Main->rate($ki, $player);
-							if ($playerdata->getKillst() % 10==0) {
-								if(Server::getInstance()->getPlayer($kil)->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
+							if ($playerdata->getKillst() % 10 == 0) {
+								if (Server::getInstance()->getPlayer($kil)->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
 									$cls = new BombingEvent();
 									main::getMain()->getScheduler()->scheduleDelayedTask(new BombingTask(Server::getInstance()->getPlayer($kil), $cls), 20);
 									Server::getInstance()->broadcastTip($kil . "が砲撃支援を要請した！");
@@ -313,10 +310,8 @@ class KillDeathEvent implements Listener {
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- でばらばらにしました §e({$playerdata->getKillst()}キルストリーク)");
 										break;
 								}
-
 							}
 						}
-
 					}
 					return false;
 				case 2:
@@ -550,12 +545,10 @@ class KillDeathEvent implements Listener {
 				case 15:
 					return true;
 					break;
-
-
 			}
-
 			return false;
 		}
+		return true;
 	}
 
 	public function onShoot(EntityShootBowEvent $event) {
@@ -600,7 +593,6 @@ class KillDeathEvent implements Listener {
 					$entity = Entity::createEntity("Egg", $event->getEntity()->getLevel(), $nbt, $event->getEntity(), $baseForce >= 1);
 					$entity->setMotion($entity->getMotion()->multiply(0.6));
 					$event->setProjectile($entity);
-
 					/*}elseif($event->getEntity()->getInventory()->getItemInHand()->getCustomName() == "§aTANBOの第三の目"){
 						$nbt = Entity::createBaseNBT(
 							$event->getEntity()->add(0, $event->getEntity()->getEyeHeight(), 0),
@@ -634,7 +626,6 @@ class KillDeathEvent implements Listener {
 		if ($attacker instanceof Player && $damager instanceof Player) {
 			$entity = $event->getEntity();
 			if ($entity instanceof Egg) {
-
 				if (!empty($this->hanabi[$attacker->getName()])) {
 					if ($this->hanabi[$attacker->getName()] === 1) {
 						if ($attacker->getInventory()->getItemInHand()->getCustomName() == "§bジムのスナイパーライフルv2") {
@@ -654,10 +645,7 @@ class KillDeathEvent implements Listener {
 					}
 				}
 			}
-
-
 			if ($entity instanceof Arrow) {
-
 				$hand = $event->getEntity()->getOwningEntity()->getInventory()->getItemInHand();
 				$tag = $hand->getNamedTag();
 				$this->hitSound($attacker);
@@ -719,7 +707,6 @@ class KillDeathEvent implements Listener {
 		}
 		$explosion = new Explosion(new Position($x,$y2,$z,$level), 1);
 		$explosion->explodeB();
-
 	}
 
 	public function saisana2($x, $y, $z, $damager, Level $level): \Generator {
@@ -735,13 +722,11 @@ class KillDeathEvent implements Listener {
 			$explosion = new Explosion(new Position($x, $y2, $z, $level), 1);
 			$explosion->explodeB();
 		}
-
 	}
 
 	public function yurisiBeam(Player $entity) {
 		$particle = new HeartParticle(new Vector3($entity->x, $entity->y + 1, $entity->z));
 		$particle->setComponents($entity->x, $entity->y + 1, $entity->z);
-
 		$increase = $entity->getDirectionVector()->normalize();
 		for ($i = 0; $i < 30; $i++) {
 			yield;
@@ -760,7 +745,6 @@ class KillDeathEvent implements Listener {
 			}
 		}
 	}
-
 
 	public function hitSound(Player $player){
 		$pk2 = new PlaySoundPacket;

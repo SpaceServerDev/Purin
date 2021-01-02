@@ -47,6 +47,7 @@ class CheckPasswordForm implements Form {
 				$player->sendMessage("§a初心者応援！釣り竿プレゼント中！");
 				$player->sendMessage("§b/jobで漁師にチェンジして/townでお魚の納品をすると効率的にお金を稼げるよ！");
 			}
+			 main::getMain()->login[$player->getName()] = 0;
 			Server::getInstance()->dispatchCommand($player,"rule");
 			return;
 		}

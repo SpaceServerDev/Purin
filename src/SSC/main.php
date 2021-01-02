@@ -13,7 +13,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
-
 use pocketmine\event\Listener;
 
 use pocketmine\level\Position;
@@ -21,7 +20,6 @@ use pocketmine\level\Position;
 use pocketmine\item\Item;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
-
 
 use pocketmine\math\Vector3;
 
@@ -37,7 +35,6 @@ use SSC\Command\BaseCommandMap;
 use SSC\Core\version;
 use SSC\Data\FishSizeConfig;
 use SSC\Data\RankConfig;
-use SSC\Data\VirtualStorageConfig;
 use SSC\Entity\PatimonEntity;
 use SSC\Event\Altay\FishEvent;
 use SSC\Event\Block\BreakEvent;
@@ -61,7 +58,6 @@ use SSC\Event\Tile\SignChange;
 use bboyyu51\pmdiscord\Sender;
 use bboyyu51\pmdiscord\structure\Content;
 
-
 use SSC\Command\AllCommands;
 
 use SSC\Data\ItemData;
@@ -69,14 +65,9 @@ use SSC\Gun\GunEvent;
 use SSC\Gun\GunManager;
 use SSC\Task\RebootTask;
 
-
 use SSC\Event\FormEvent;
 
-
-
-
 class main extends PluginBase implements Listener {
-
 
 	/*
 	 * shop,sell,eshop
@@ -87,18 +78,13 @@ class main extends PluginBase implements Listener {
 	public $itemdamage;
 	public $itemamount;
 
-
 	public $seconds = 30;
 
 	public $itiji;
 
-
-
 	public $login;
 
 	public $reload=21600;
-
-
 
 	/*
 	 * tpp
@@ -155,14 +141,17 @@ class main extends PluginBase implements Listener {
 	 * @var Config
 	 */
 	public $loginbonus;
+
 	/**
 	 * @var Config
 	 */
 	public $levelbonus;
+
 	/**
 	 * @var Config
 	 */
 	public $banlist;
+
 	/**
 	 * @var Config
 	 */
@@ -177,10 +166,12 @@ class main extends PluginBase implements Listener {
 	 * @var Entity
 	 */
 	public $patimon;
+
 	/**
 	 * @var Config
 	 */
 	private $npc;
+
 	/**
 	 * @var Config
 	 */
@@ -200,7 +191,6 @@ class main extends PluginBase implements Listener {
 	 * @var Config
 	 */
 	public $otosidama;
-
 
 	public function onEnable() {
 		$this->registerEvents();
@@ -345,17 +335,10 @@ class main extends PluginBase implements Listener {
 		$this->patimon=$entity;
 	}
 
-
-
-
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		new AllCommands($this,$sender,$command->getName(),$args);
 		return true;
 	}
-
-
-
-
 
 	public static function getPlayerData(String $name):PlayerEvent{
 		return self::getMain()->playerdata[$name];
@@ -382,8 +365,6 @@ class main extends PluginBase implements Listener {
 		Sender::sendAsync($webhook);
 	}
 
-
-
 	public function isCBan($cid) : bool{
 		$this->banlist->reload();
 		return $this->banlist->exists($cid);
@@ -395,8 +376,6 @@ class main extends PluginBase implements Listener {
 		$this->banlist->set(strval($cid),$reason);
 		$this->banlist->save();
 	}
-
-
 
 	public function removeCBan($cid) {
 		if (!$this->isCBan($cid)) return;
@@ -500,8 +479,6 @@ class main extends PluginBase implements Listener {
 		$this->log->query("INSERT OR REPLACE INTO logdata VALUES(\"$xyz\",   \"$who\",  \"$eventname\", \"$time\", \"$id\",\"$meta\")");
 	}
 
-
-
 	public function checklog($x, $y, $z,String $level,Player $player){
 		$xyz =""."x"."$x"."y"."$y"."z"."$z"."w"."$level"."";
 		$result = $this->log->query("SELECT who , action, id,meta, time FROM logdata WHERE xyz = \"$xyz\"");
@@ -573,10 +550,7 @@ class main extends PluginBase implements Listener {
 		return $this->vs;
 	}
 
-
-
 	public function onDisable() {
 		$this->sendDiscord("CLOSE","宇宙サーバーが停止しました");
-	 }
-
+	}
 }

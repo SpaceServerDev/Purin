@@ -8,6 +8,7 @@ use bboyyu51\pmdiscord\Sender;
 use bboyyu51\pmdiscord\structure\Content;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
+use SSC\Form\LoginForm\CheckPasswordForm;
 use SSC\Form\LoginForm\RegisterForm;
 use SSC\Form\LoginForm\ReloginForm;
 use SSC\main;
@@ -19,11 +20,11 @@ class ChatEvent implements Listener {
 		 $name = $player->getName();
 		 if (!main::getMain()->password->exists($name)) {
 			$player->setImmobile(true);
-			$player->sendForm(new RegisterForm());
+			$player->sendForm(new CheckPasswordForm());
 			$event->setCancelled();
 		 } else {
 			 if (main::getMain()->login[$name]==1) {
-				 $player->sendForm(new ReloginForm());
+				 $player->sendForm(new CheckPasswordForm());
 				 main::getMain()->login[$name] = 1;
 				 $player->setImmobile(true);
 				 $event->setCancelled();

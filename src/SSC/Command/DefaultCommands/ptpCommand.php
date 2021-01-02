@@ -49,8 +49,8 @@ class ptpCommand extends VanillaCommand {
 							$y++;
 						}
 						if($aiteplayer->getLevel()->getFolderName()==="moon"){
-							$sender->addEffect(new EffectInstance(Effect::getEffect(11), 20 * 20, 3, true));
-							$sender->addEffect(new EffectInstance(Effect::getEffect(18), 20 * 20, 3, true));
+							$sender->addEffect(new EffectInstance(Effect::getEffect(11), 20 * 20, 100, true));
+							$sender->addEffect(new EffectInstance(Effect::getEffect(18), 20 * 20, 100, true));
 						}
 						$sender->teleport(new Position($aiteplayer->getFloorX(),$y, $aiteplayer->getFloorZ(), $aiteplayer->getLevel()));
 						$sender->sendMessage("[管理AI]§a権限の適合を確認しましたのでワープいたします");
