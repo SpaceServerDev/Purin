@@ -40,6 +40,18 @@ class tppCommand extends VanillaCommand {
 							return true;
 						}
 					}
+					if($target->getLevel()->getFolderName()==="pluto"){
+						if(!main::getPlayerData($name)->isExpertLevel()){
+							$sender->sendMessage("[転送用AI]§a相手は冥王星にいますが、あなたは冥王星に行く権限を未所持のため送信できませんでした。");
+							return true;
+						}
+					}
+					if($target->getLevel()->getFolderName()==="moon"){
+						if(!main::getPlayerData($name)->getSpaceShipSize()<20){
+							$sender->sendMessage("[転送用AI]§a相手は月にいますが、あなたは月に行く権限を未所持のため送信できませんでした。");
+							return true;
+						}
+					}
 					if ($targetname === $sender->getName()) {
 						$sender->sendMessage("[転送用AI]§a自分にリクエストを送信することはできません。");
 						return true;

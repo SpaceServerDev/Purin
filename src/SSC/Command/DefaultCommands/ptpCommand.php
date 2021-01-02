@@ -7,6 +7,8 @@ namespace SSC\Command\DefaultCommands;
 use pocketmine\command\CommandSender;
 use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\utils\CommandException;
+use pocketmine\entity\Effect;
+use pocketmine\entity\EffectInstance;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -42,7 +44,15 @@ class ptpCommand extends VanillaCommand {
 							$sender->getPlayer()->setAllowFlight(false);
 							$sender->setFlying(false);
 						}
-						$sender->teleport(new Position($aiteplayer->getFloorX(), $aiteplayer->getFloorY(), $aiteplayer->getFloorZ(), $aiteplayer->getLevel()));
+						$y= $aiteplayer->getFloorY();
+						if(main::getPlayerData($aiteplayer->getName())->getShitDownNow()){
+							$y++;
+						}
+						if($aiteplayer->getLevel()->getFolderName()==="moon"){
+							$sender->addEffect(new EffectInstance(Effect::getEffect(11), 20 * 20, 3, true));
+							$sender->addEffect(new EffectInstance(Effect::getEffect(18), 20 * 20, 3, true));
+						}
+						$sender->teleport(new Position($aiteplayer->getFloorX(),$y, $aiteplayer->getFloorZ(), $aiteplayer->getLevel()));
 						$sender->sendMessage("[管理AI]§a権限の適合を確認しましたのでワープいたします");
 						foreach (Server::getInstance()->getOnlinePlayers() as $plyr) {
 							if ($plyr->isOp()) {

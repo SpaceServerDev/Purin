@@ -131,7 +131,19 @@ class KillDeathEvent implements Listener {
 		}
 
 		if ($event->getCause() === 6) {
-			if ($entity->getLevel()->getFolderName() != "pvp") {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon") {
+				$event->setCancelled();
+			}
+		}
+
+		if ($event->getCause() === 9) {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon" ) {
+				$event->setCancelled();
+			}
+		}
+
+		if ($event->getCause() === 10) {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon") {
 				$event->setCancelled();
 			}
 		}

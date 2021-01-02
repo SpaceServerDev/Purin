@@ -1168,7 +1168,7 @@ Class ItemData{
 		"ID" => 76,
 		"DAMAGE" => 0,
 		"NAME" => "レッドストーンの松明",
-		"PRICE" => 100
+		"PRICE" => 0
 	];
 
 	const Stone_Button = [
@@ -2216,7 +2216,7 @@ Class ItemData{
 		"ID" => 173,
 		"DAMAGE" => 0,
 		"NAME" => "石炭ブロック",
-		"PRICE" => 50
+		"PRICE" => 450
 	];
 
 
