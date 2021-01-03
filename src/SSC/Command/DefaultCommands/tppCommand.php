@@ -47,7 +47,7 @@ class tppCommand extends VanillaCommand {
 						}
 					}
 					if($target->getLevel()->getFolderName()==="moon"){
-						if(!main::getPlayerData($name)->getSpaceShipSize()<20){
+						if(main::getPlayerData($name)->getSpaceShipSize()<20){
 							$sender->sendMessage("[転送用AI]§a相手は月にいますが、あなたは月に行く権限を未所持のため送信できませんでした。");
 							return true;
 						}

@@ -111,6 +111,7 @@ class SellRegisterForm implements Form {
 			return;
 		}
 
+		$this->list[$data[1]]->setCount($amount);
 		$item=Item::nbtDeserialize(($this->list[$data[1]]->nbtSerialize()));
 		$player->getInventory()->removeItem($item);
 		$cls=new tradeConfig();
@@ -205,7 +206,7 @@ class SelectMyMarketForm implements Form{
 		$cls = new tradeConfig();
 		switch ($data) {
 			case 0:
-				$item = tradeConfig::getItem($data["id"]);
+				$item = tradeConfig::getItem($this->data["id"]);
 				if($item instanceof Item) {
 					if ($player->getInventory()->canAddItem($item)) {
 						$cls->removeItem($this->data["id"]);

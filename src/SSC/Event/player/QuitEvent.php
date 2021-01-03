@@ -36,9 +36,11 @@ class QuitEvent implements Listener {
 			main::getMain()->getScheduler()->cancelTask(main::getMain()->id[$name]);
 			unset(main::getMain()->id[$name]);
 		}
-		main::getMain()->playerlist->reload();
-		main::getMain()->playerlist->set($player->getName(), (string)$player->getUniqueId()->toString());
-		main::getMain()->playerlist->save();
+		if(main::getMain()->playerlist->exists($name)) {
+			main::getMain()->playerlist->reload();
+			main::getMain()->playerlist->set($player->getName(), (string)$player->getUniqueId()->toString());
+			main::getMain()->playerlist->save();
+		}
 		$money = EconomyAPI::getInstance()->myMoney($name);
 		$playerdata = main::getPlayerData($name);
 		$playerdata->save($money);

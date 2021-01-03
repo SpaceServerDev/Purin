@@ -138,7 +138,7 @@ class JoinEvent implements Listener {
 			}
 		}
 		$task = new SendTask(main::getMain(), $player);
-		main::getMain()->getScheduler()->scheduleRepeatingTask($task, 10);
+		main::getMain()->getScheduler()->scheduleRepeatingTask($task, 5);
 		main::getMain()->id[$player->getName()] = $task->getTaskId();
 
 		$pk = new PlaySoundPacket;
