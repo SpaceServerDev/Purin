@@ -38,7 +38,7 @@ class LoginEvent implements Listener {
 		new Config($file, Config::YAML);
 
 
-		if (!($playerconfig->exists("3"))) {
+		if (!($playerconfig->exists(PlayerConfigManager::UPDATE_VERSION))) {
 			if (!($playerconfig->exists($name))) {
 				$ip = $event->getPlayer()->getAddress();
 				$dt = date("Y/m/d G:i:s");
@@ -162,6 +162,14 @@ class LoginEvent implements Listener {
 		if ($playerdata->configVersion() !== PlayerConfigManager::UPDATE_VERSION) {
 			$playerdata->updateConfig();
 		}
+
+		$playerconfig->reload();
+		if($playerconfig->exists($name)){
+			$playerconfig->remove($name);
+			$playerconfig->save();
+		}
+
+
 		//main::getMain()->getVirtualStorage()->query("CREATE TABLE IF NOT EXISTS ".$name." (ID INTEGER PRIMARY KEY,NBT TEXT,COUNTS INTEGER)");
 	}
 }
