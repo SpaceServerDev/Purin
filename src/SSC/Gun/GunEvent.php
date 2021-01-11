@@ -4,6 +4,7 @@
 namespace SSC\Gun;
 
 
+use pocketmine\block\Block;
 use pocketmine\level\Explosion;
 use pocketmine\level\Level;
 use pocketmine\level\particle\DustParticle;
@@ -148,22 +149,24 @@ class GunEvent implements Listener {
 		for ($i = 0; $i < $gundata->getDistance(); $i++) {
 			yield;
 			$pos = $particle->add($increase);
-			if (!$entity->level->getBlock($pos)->canBeFlowedInto()){
-				foreach ($entity->level->getPlayers() as $player) {
-					if ($player->distance($pos) < 8.0 && $entity !== $player) {
-						$this->playerSound("music.bullets-bounce1",$player, 0.6);
+			if ($entity->level instanceof Level) {
+				if (!$entity->level->getBlock($pos)->canBeFlowedInto()) {
+					foreach ($entity->level->getPlayers() as $player) {
+						if ($player->distance($pos) < 8.0 && $entity !== $player) {
+							$this->playerSound("music.bullets-bounce1", $player, 0.6);
+						}
 					}
+					break;
 				}
-				break;
-			}
-			$particle->setComponents($pos->x, $pos->y, $pos->z);
-			$entity->level->addParticle($particle);
-			foreach ($entity->level->getPlayers() as $player) {
-				if ($player->distance($pos) < 1.5 && $entity !== $player) {
-					$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, $gundata->getDamage(), [], $gundata->getKnockBack());
-					$this->sound("music.attack",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel());
-					$player->attack($event);
-					break 2;
+				$particle->setComponents($pos->x, $pos->y, $pos->z);
+				$entity->level->addParticle($particle);
+				foreach ($entity->level->getPlayers() as $player) {
+					if ($player->distance($pos) < 1.5 && $entity !== $player) {
+						$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, $gundata->getDamage(), [], $gundata->getKnockBack());
+						$this->sound("music.attack", $entity->getFloorX(), $entity->getFloorY(), $entity->getFloorZ(), $entity->getLevel());
+						$player->attack($event);
+						break 2;
+					}
 				}
 			}
 		}
@@ -176,22 +179,24 @@ class GunEvent implements Listener {
 		$increase = $entity->getDirectionVector()->normalize();
 		for ($i = 0; $i < $gundata->getDistance(); $i++) {
 			$pos = $particle->add($increase);
-			if (!$entity->level->getBlock($pos)->canBeFlowedInto()){
-				foreach ($entity->level->getPlayers() as $player) {
-					if ($player->distance($pos) < 8.0 && $entity !== $player) {
-						$this->playerSound("music.bullets-bounce1",$player, 0.6);
+			if ($entity->level instanceof Level) {
+				if (!$entity->level->getBlock($pos)->canBeFlowedInto()) {
+					foreach ($entity->level->getPlayers() as $player) {
+						if ($player->distance($pos) < 8.0 && $entity !== $player) {
+							$this->playerSound("music.bullets-bounce1", $player, 0.6);
+						}
 					}
+					break;
 				}
-				break;
-			}
-			$particle->setComponents($pos->x, $pos->y, $pos->z);
-			$entity->level->addParticle($particle);
-			foreach ($entity->level->getPlayers() as $player) {
-				if ($player->distance($pos) < 1.5 && $entity !== $player) {
-					$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, $gundata->getDamage(), [], $gundata->getKnockBack());
-					$this->sound("music.attack",$entity->getFloorX(),$entity->getFloorY(),$entity->getFloorZ(),$entity->getLevel());
-					$player->attack($event);
-					break 2;
+				$particle->setComponents($pos->x, $pos->y, $pos->z);
+				$entity->level->addParticle($particle);
+				foreach ($entity->level->getPlayers() as $player) {
+					if ($player->distance($pos) < 1.5 && $entity !== $player) {
+						$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, $gundata->getDamage(), [], $gundata->getKnockBack());
+						$this->sound("music.attack", $entity->getFloorX(), $entity->getFloorY(), $entity->getFloorZ(), $entity->getLevel());
+						$player->attack($event);
+						break 2;
+					}
 				}
 			}
 		}

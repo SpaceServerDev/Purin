@@ -27,6 +27,7 @@ class xtpCommand extends VanillaCommand {
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		if ($sender instanceof Player) {
 			if (!isset($args[0])or!isset($args[1])or!isset($args[2])or!isset($args[3])) {
+				$sender->sendMessage("[転送システム] /xtp x座標 y座標 z座標 ワールド名(地球/人工惑星/太陽/海王星/火星)");
 				return false;
 			}
 			$playerdata=main::getPlayerData($sender->getName());

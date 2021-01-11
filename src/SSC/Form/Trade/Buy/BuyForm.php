@@ -102,6 +102,7 @@ class SearchIDForm implements Form{
 		$content[]=[
 			"type"=>"input",
 			"text"=>"ダメージ値",
+			"default" => "0",
 		];
 		return [
 			'type'=>'custom_form',

@@ -30,9 +30,11 @@ class moonCommand extends VanillaCommand {
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		if(!$sender instanceof Player) return false;
 		$playerdata=main::getPlayerData($sender->getName());
-		if($playerdata->getSpaceShipSize()<20) {
-			$sender->getPlayer()->sendMessage("[管理AI] 宇宙船レベルが20に達すると行くことができます！");
-			return true;
+		if(!$playerdata->getPlayer()->isOp()) {
+			if ($playerdata->getSpaceShipSize() < 20) {
+				$sender->getPlayer()->sendMessage("[管理AI] 宇宙船レベルが20に達すると行くことができます！");
+				return true;
+			}
 		}
 		$pos=new Position(mt_rand(-100,100),100,mt_rand(-100,100),Server::getInstance()->getLevelByName("moon"));
 		$sender->teleport($pos);

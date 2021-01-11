@@ -34,14 +34,20 @@ class RareEventGacha implements Gacha {
 			case 8:
 				$item = Item::get(282, 0, 1);
 				$item->setCustomName("§aとんこつラーメン");
+				$rand=mt_rand(1,100000);
+				$item->getNamedTag()->setInt("ramen",$rand);
 				return [$item,2,"§aとんこつラーメン"];
 			case 9:
 				$item = Item::get(413, 0, 1);
 				$item->setCustomName("§a醤油ラーメン");
+				$rand=mt_rand(1,100000);
+				$item->getNamedTag()->setInt("ramen",$rand);
 				return [$item,2,"§a醤油ラーメン"];
 			case 10:
 				$item = Item::get(459, 0, 1);
 				$item->setCustomName("§a担々麺");
+				$rand=mt_rand(1,100000);
+				$item->getNamedTag()->setInt("ramen",$rand);
 				return [$item,2,"§a担々麺"];
 			case 11:
 				$item = Item::get(373, 0, 1);

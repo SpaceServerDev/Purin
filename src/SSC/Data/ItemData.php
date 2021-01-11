@@ -337,14 +337,14 @@ Class ItemData{
 		"ID" => 21,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリ鉱石",
-		"PRICE" => 500
+		"PRICE" => 100
 	];
 
 	const Lapis_Block = [
 		"ID" => 22,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリのブロック",
-		"PRICE" => 4500
+		"PRICE" => 900
 	];
 
 	const Dispenser = [

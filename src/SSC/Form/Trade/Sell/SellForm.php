@@ -18,7 +18,7 @@ class SellForm implements Form {
 				return;
 			case 1:
 				$cls = new tradeConfig();
-				if ($cls->getMarketPlayer($player->getName()) == null) {
+				if ($cls->getMarketPlayer($player->getName()) === null) {
 					$player->sendMessage("[§aTRADE§r] 出品していません");
 					return;
 				}
@@ -171,6 +171,7 @@ class ConfirmMyMarketForm implements Form{
 
 
 	public function jsonSerialize() {
+		$button=array();
 		foreach ($this->data as $data){
 			$item = tradeConfig::getItem($data["id"]);
 			if($item instanceof Item) {

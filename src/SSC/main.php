@@ -84,7 +84,7 @@ class main extends PluginBase implements Listener {
 
 	public $login;
 
-	public $reload=21600;
+	private $reload=21600;
 
 	/*
 	 * tpp
@@ -195,7 +195,7 @@ class main extends PluginBase implements Listener {
 	public function onEnable() {
 		$this->registerEvents();
 		BaseCommandMap::init($this);
-		$this::loadLevels();
+		$this->loadLevels();
 		$this::setTime();
 
 		self::$main = $this;
@@ -205,7 +205,7 @@ class main extends PluginBase implements Listener {
 
 		$this->setConfig();
 		$this->sendAA();
-		$this->getScheduler()->scheduleRepeatingTask(new RebootTask($this), 20);
+		$this->getScheduler()->scheduleRepeatingTask(new RebootTask(), 20);
 		$this->sendDiscord("OPEN","宇宙サーバーが開いたよ！");
 		Entity::registerEntity(PatimonEntity::class, true);
 		if(!$this->npc->exists("spawned")) {
@@ -215,21 +215,12 @@ class main extends PluginBase implements Listener {
 		}
 	}
 
-	private static function loadLevels(){
-	 	Server::getInstance()->loadLevel("world");
-		Server::getInstance()->loadLevel("earth");
-		Server::getInstance()->loadLevel("sun");
-		Server::getInstance()->loadLevel("pvp");
-		Server::getInstance()->loadLevel("space");
-		Server::getInstance()->loadLevel("flatworld");
-		Server::getInstance()->loadLevel("TauCetusE");
-		Server::getInstance()->loadLevel("TauCetusF");
-		Server::getInstance()->loadLevel("Neptune");
-		Server::getInstance()->loadLevel("Blackhole");
-		Server::getInstance()->loadLevel("trappist-1e");
-		Server::getInstance()->loadLevel("mars");
-		Server::getInstance()->loadLevel("moon");
-		Server::getInstance()->loadLevel("pluto");
+	private function loadLevels(){
+		foreach ($this->getLevels() as $level) Server::getInstance()->loadLevel($level);
+	}
+
+	public function getLevels():array{
+		return ["world","earth","sun","pvp","space","flatworld","TauCetusE","TauCetusF","Neptune","Blackhole","trappist-1e","mars","moon","pluto"];
 	}
 
 	private static function setTime(){
@@ -447,6 +438,7 @@ class main extends PluginBase implements Listener {
 		$pos = new Vector3($player->x, $player->y, $player->z);
 		$player->getLevel()->broadcastLevelSoundEvent($pos, LevelSoundEventPacket::SOUND_BEACON_ACTIVATE);
 		$playerdata->setDisplayName($playerdata->getDisplayName());
+
 	}
 
 	public function rate(Player $killer,Player $deather) {
@@ -533,6 +525,15 @@ class main extends PluginBase implements Listener {
 		return false;
 	}
 
+	public function getServerReloadTick():int{
+		return $this->reload;
+	}
+
+	public function CountDownServerReloadTick(){
+		$this->reload--;
+	}
+
+
 	public function registerRanking(PlayerEvent $pe){
 		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level","spaceshipsize"];
 		$var=["STAY","DAY","MAXREPEAT","BREAK","PEACE","TRAPPIST","FLOWER","WOOD","GACHA","SHOPPING","SLOT","KILL","MAXKILLSTREAK","FISH","COAL","LAPIS","IRON","REDSTONE","GOLD","DIAMOND","EMERALD","LEVEL","SPACESHIP_SIZE"];
@@ -551,6 +552,16 @@ class main extends PluginBase implements Listener {
 	}
 
 	public function onDisable() {
+		foreach (Server::getInstance()->getOnlinePlayers() as $p) {
+			if (!$this->getPlayerData($p->getName())) {
+				continue;
+			}
+			$playerdata = $this->getPlayerData($p->getName());
+			if ($playerdata->getLoad()) {
+				$playerdata->save($this->economyAPI->myMoney($p->getName()));
+			}
+			$p->save();
+		}
 		$this->sendDiscord("CLOSE","宇宙サーバーが停止しました");
 	}
 }

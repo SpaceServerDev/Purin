@@ -54,6 +54,7 @@ use SSC\Item\Item_AK47;
 use SSC\Item\Item_AWM;
 use SSC\Item\Item_RPG7;
 use SSC\Item\Item_UZI;
+use SSC\Item\JimSniperV2;
 use SSC\Item\RepairCream;
 use SSC\Level\Particle\HeartCircleParticle;
 use SSC\main;
@@ -104,6 +105,8 @@ class testCommand extends VanillaCommand {
 			$item->getNamedTag()->setInt("Fish",1);
 			$sender->getInventory()->addItem($item);
 
+			$item=JimSniperV2::get();
+			$sender->getInventory()->addItem($item);
 			$pk=new OnScreenTextureAnimationPacket();
 			$pk->effectId=27;
 			$sender->sendDataPacket($pk);

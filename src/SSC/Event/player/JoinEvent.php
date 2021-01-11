@@ -8,6 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Server;
 use SSC\Data\FishConfig;
@@ -129,6 +130,8 @@ class JoinEvent implements Listener {
 				$event->setJoinMessage("§a[入室] §bにゃんはろー§d§lチェシャ猫§r§bがきーたよ(๑>ㅅ<๑)ฅ");
 			} else if ($name === "VillagerMeyason") {
 				$event->setJoinMessage("§a[入室] §5じゃがいも§e大王 §d§lめやそん §r§5がいらっしゃった！");
+			} else if ($name === "rainbowkirby107") {
+				$event->setJoinMessage("§a[入室] §a〜§dはるかぜと§bともに§a〜§cに§9じ§eぽ§aよ§fくんが来たよ！");
 			} else {
 				$event->setJoinMessage("§a[入室] §c" . $name . "§e様が§a§lオンライン§r§eになりました");
 			}
@@ -156,6 +159,9 @@ class JoinEvent implements Listener {
 		$pk->z = $player->z;
 		$pk->volume = 0.5;
 		$pk->pitch = 1;
+		$player->sendDataPacket($pk);
+		$pk=new OnScreenTextureAnimationPacket();
+		$pk->effectId=27;
 		$player->sendDataPacket($pk);
 
 		main::getMain()->playerlist->reload();

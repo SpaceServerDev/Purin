@@ -5,6 +5,8 @@ namespace SSC\Event\player;
 use pocketmine\entity\Human;
 use pocketmine\entity\Tamable;
 use pocketmine\inventory\BaseInventory;
+use pocketmine\item\Fireworks;
+use pocketmine\item\ItemIds;
 use pocketmine\level\Explosion;
 use pocketmine\level\Level;
 use pocketmine\level\particle\AngryVillagerParticle;
@@ -636,7 +638,7 @@ class KillDeathEvent implements Listener {
 							$pk2->z = $event->getEntity()->z;
 							$pk2->volume = 0.5;
 							$pk2->pitch = 1;
-							$this->Main->getServer()->broadcastPacket()($attacker->getLevel()->getPlayers(), $pk2);
+							$this->Main->getServer()->broadcastPacket($attacker->getLevel()->getPlayers(), $pk2);
 							$event->getEntityHit()->attack(new EntityDamageEvent($damager, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 5));
 							$this->hanabi[$attacker->getName()] = 0;
 						} else {

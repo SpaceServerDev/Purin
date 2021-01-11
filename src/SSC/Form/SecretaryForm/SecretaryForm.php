@@ -13,6 +13,7 @@ use SSC\Form\RankForm;
 use SSC\Form\SpaceShip\SpaceShipForm;
 use SSC\Form\WarpListForm;
 use SSC\main;
+use SSC\PlayerEvent;
 
 class SecretaryForm implements Form {
 
@@ -28,7 +29,7 @@ class SecretaryForm implements Form {
 
 		switch($data){
 			case 0:
-				$player->sendForm(new WarpForm());
+				$player->sendForm(new CosmoWarpListForm());
 			break;
 			case 1:
 				$player->sendForm(new LandForm());
@@ -704,7 +705,7 @@ class LandGiveForm implements Form{
 	 * @throws FormValidationException if the data could not be processed
 	 */
 	public function handleResponse(Player $player, $data): void {
-		if(!is_numeric($data[1]) and !is_numeric($data[2])) return;
+		if(!is_numeric($data[1])) return;
 		Server::getInstance()->dispatchCommand($player, "land give ".$data[1]." ".$data[2]);
 	}
 
@@ -856,5 +857,237 @@ class TownListAboutForm implements Form{
 			'button1'=>"もっと見る",
 			'button2'=>"おわる"
 		];
+	}
+}
+
+class CosmoWarpListForm implements Form{
+
+	/**
+	 * Handles a form response from a player.
+	 *
+	 * @param mixed $data
+	 *
+	 * @throws FormValidationException if the data could not be processed
+	 */
+	public function handleResponse(Player $player, $data): void {
+		if(!is_numeric($data)) return;
+
+		switch($data) {
+			case 0:
+				$player->sendForm(new WarpForm());
+				break;
+			case 1:
+				$player->sendForm(new xtpForm(main::getPlayerData($player->getName())));
+				break;
+			case 2:
+				$player->sendForm(new tppForm());
+				break;
+		}
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	public function jsonSerialize() {
+		return [
+			"type" => "form",
+			"title" => "§a秘書 コスモ",
+			"content" => "テレポートです！",
+			"buttons" => [
+				[
+					'text' => "各地点にテレポート",//0
+				],
+				[
+					'text' => "好きな場所にテレポート",//1
+				],
+				[
+					'text' => "他人にテレポート申請を送る",//2
+				],
+			]
+		];
+	}
+}
+
+class xtpForm implements Form{
+	/**
+	 * @var PlayerEvent
+	 */
+	private $playerEvent;
+
+	/**
+	 * @var array
+	 */
+	private $world;
+
+	public function __construct(PlayerEvent $playerEvent) {
+		$this->playerEvent=$playerEvent;
+		$this->world=["地球","太陽","人工惑星","海王星","火星"];
+	}
+
+	/**
+	 * Handles a form response from a player.
+	 *
+	 * @param mixed $data
+	 *
+	 * @throws FormValidationException if the data could not be processed
+	 */
+	public function handleResponse(Player $player, $data): void {
+		if($data[1]===null or $data[2]===null or $data[3]===null) return;
+		Server::getInstance()->dispatchCommand($player, "xtp ".$data[1]." ".$data[2]." ".$data[3]." ".$this->world[$data[4]]);
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	public function jsonSerialize() {
+		$playerdata=$this->playerEvent;
+		$maxX=$playerdata->getPlayer()->getFloorX()+$playerdata->getSpaceShipSize()*100;
+		$minX=$playerdata->getPlayer()->getFloorX()-$playerdata->getSpaceShipSize()*100;
+		$maxZ=$playerdata->getPlayer()->getFloorZ()+$playerdata->getSpaceShipSize()*100;
+		$minZ=$playerdata->getPlayer()->getFloorZ()-$playerdata->getSpaceShipSize()*100;
+		return [
+			"type" => "custom_form",
+			"title" => "§a秘書 コスモ",
+			"content" => [
+				["type" => "label",
+				"text" => "x,y,zを指定したテレポートをします。\n現在行ける距離\nX:".$minX."～".$maxX."\nZ:".$minZ."～".$maxZ,],
+				["type" => "input",
+				"text" => "X",],
+				["type" => "input",
+				"text" => "Y",],
+				["type" => "input",
+				"text" => "Z",],
+				["type" => "dropdown",
+					"text" => "ワールド",
+					"options"=>$this->world],
+			],
+		];
+
+	}
+}
+
+class tppForm implements Form{
+	/**
+	 * Handles a form response from a player.
+	 *
+	 * @param mixed $data
+	 *
+	 * @throws FormValidationException if the data could not be processed
+	 */
+	public function handleResponse(Player $player, $data): void {
+		if(!is_numeric($data)) return;
+
+		switch($data) {
+			case 0:
+				$player->sendForm(new tppSendForm($player));
+				break;
+			case 1:
+				Server::getInstance()->dispatchCommand($player, "tpagree");
+				break;
+			case 2:
+				Server::getInstance()->dispatchCommand($player, "tpdis");
+				break;
+			case 3:
+				Server::getInstance()->dispatchCommand($player, "tpcancel");
+				break;
+		}
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	public function jsonSerialize() {
+		return [
+			"type" => "form",
+			"title" => "§a秘書 コスモ",
+			"content" => "秘書です。私にできることなら何でもします！",
+			"buttons" => [
+				[
+					'text' => "テレポートリクエストを送る",//0
+				],
+				[
+					'text' => "テレポートリクエストを承認する",//1
+				],
+				[
+					'text' => "テレポートリクエストを拒否する",//2
+				],
+				[
+					'text' => "テレポートリクエストをキャンセルする",//3
+				],
+			]
+		];
+	}
+}
+
+class tppSendForm implements Form{
+
+	/**
+	 * @var string
+	 */
+	private $players;
+
+	/**
+	 * @var Player
+	 */
+	private $player;
+
+	public function __construct(Player $player) {
+		$this->player=$player;
+	}
+
+	/**
+	 * Handles a form response from a player.
+	 *
+	 * @param mixed $data
+	 *
+	 * @throws FormValidationException if the data could not be processed
+	 */
+	public function handleResponse(Player $player, $data): void {
+		if($data[1]===null) return;
+		if($data[1]===0){
+			$player->sendForm(new tppForm());
+			return;
+		}
+		Server::getInstance()->dispatchCommand($player, "tpp ".$this->players[$data[1]]);
+	}
+
+	/**
+	 * Specify data which should be serialized to JSON
+	 * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+	 * @return mixed data which can be serialized by <b>json_encode</b>,
+	 * which is a value of any type other than a resource.
+	 * @since 5.4.0
+	 */
+	public function jsonSerialize() {
+		$this->players[]="戻る";
+		foreach (Server::getInstance()->getOnlinePlayers() as $names) {
+			if($this->player->getName()!==$names->getName()) {
+				$this->players[] = $names->getName();
+			}
+		}
+		return [
+			"type" => "custom_form",
+			"title" => "§a秘書 コスモ",
+			"content" => [
+				["type" => "label",
+				"text" => "プレイヤーにテレポート申請を送信します！",],
+				["type" => "dropdown",
+					"text" => "プレイヤー名",
+					"options"=>$this->players],
+			],
+		];
+
 	}
 }

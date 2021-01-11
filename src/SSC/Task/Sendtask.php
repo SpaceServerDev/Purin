@@ -85,7 +85,7 @@ class Sendtask extends Task{
 			$damage = $item->getDamage();
 			$time = date("G:i:s");
 			$souji = $this->main->seconds;
-			$times = $this->main->reload;
+			$times = main::getMain()->getServerReloadTick();
 			$hours = floor($times / 3600);
 			$minutes = floor(($times / 60) % 60);
 			$seconds = $times % 60;

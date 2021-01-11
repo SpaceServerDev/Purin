@@ -6,6 +6,7 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use SSC\Gacha\Gacha;
+use SSC\Item\JimSniperV2;
 use SSC\Item\RepairCream;
 
 class StarEventGacha implements Gacha {
@@ -104,10 +105,7 @@ class StarEventGacha implements Gacha {
 					$item->addEnchantment(new EnchantmentInstance($enchantment, 3));
 					return[$item,4,"§d聖天使の翼"];
 				case 2:
-					$item = Item::get(261, 0, 1);
-					$item->setCustomName("§bジムのスナイパーライフルv2");
-					$enchantment = Enchantment::getEnchantment(17);
-					$item->addEnchantment(new EnchantmentInstance($enchantment, 10));
+					$item = JimSniperV2::get();
 					return[$item,4,"§bジムのスナイパーライフルv2"];
 				/*case 3:
 					$item = Item::get(261, 0, 1);

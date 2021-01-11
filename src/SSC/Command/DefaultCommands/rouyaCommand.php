@@ -30,8 +30,7 @@ class rouyaCommand extends VanillaCommand {
 	 * @throws CommandException
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
-		if($sender instanceof Player) {
-			if ($sender->isOp()) {
+			if ($sender->isOp() or !$sender instanceof Player) {
 				if (!isset($args[0])) return false;
 				$target = $this->main->getServer()->getPlayer($args[0]);
 				if ($target instanceof Player) {
@@ -55,7 +54,6 @@ class rouyaCommand extends VanillaCommand {
 					}
 				}
 			}
-		}
 		return true;
 	}
 }

@@ -27,8 +27,8 @@ class QuitEvent implements Listener {
 		$webhook->setCustomName("QUIT");
 		Sender::sendAsync($webhook);
 
-		$pe=main::getPlayerData($player->getName());
-		if($pe->getShitDownNow()){
+		$pe = main::getPlayerData($player->getName());
+		if ($pe->getShitDownNow()) {
 			ShitDownEvent::StandUp($player);
 		}
 
@@ -36,7 +36,7 @@ class QuitEvent implements Listener {
 			main::getMain()->getScheduler()->cancelTask(main::getMain()->id[$name]);
 			unset(main::getMain()->id[$name]);
 		}
-		if(main::getMain()->playerlist->exists($name)) {
+		if (main::getMain()->playerlist->exists($name)) {
 			main::getMain()->playerlist->reload();
 			main::getMain()->playerlist->set($player->getName(), (string)$player->getUniqueId()->toString());
 			main::getMain()->playerlist->save();
@@ -62,8 +62,19 @@ class QuitEvent implements Listener {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§a" . $re . "§eで§7§lオフライン§r§eになりました");
 		}
 
-		if($playerdata->getPerm()!="OP" and $playerdata->getPerm()!="オーナー"){
+		if ($playerdata->getPerm() != "OP" and $playerdata->getPerm() != "オーナー") {
 			main::getMain()->registerRanking($playerdata);
+		}
+
+		if ($player->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
+			$gunmanager = main::getMain()->getGunManager();
+			$gun = $player->getInventory()->getItemInHand()->getNamedTag()->getString("gun");
+			$serial = $player->getInventory()->getItemInHand()->getNamedTag()->getString("serial");
+			$gundata = $gunmanager->getGunData($gun, $serial);
+			if ($gundata->isShootNow()) {
+				main::getMain()->getScheduler()->cancelTask($gundata->getTaskId());
+				$gundata->endShoot();
+			}
 		}
 	}
 }

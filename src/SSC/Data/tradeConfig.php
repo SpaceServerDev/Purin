@@ -76,7 +76,7 @@ class tradeConfig extends Config {
 		$items = [];
 		foreach ($adata as $data) {
 			if (isset($data["id"])) {
-				$item = Item::nbtDeserialize($data["nbt"]);
+				$item = Item::nbtDeserialize(unserialize($data["nbt"]));
 				if ($item instanceof Item) {
 					if ($item->getId() == $id) {
 						if (!$data["public"]) {

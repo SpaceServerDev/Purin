@@ -5,7 +5,6 @@ namespace SSC;
 
 use pocketmine\Player;
 
-use pocketmine\scheduler\Task;
 use pocketmine\utils\Config;
 
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
@@ -15,7 +14,6 @@ use pocketmine\math\Vector3;
 use SSC\Data\FishConfig;
 use SSC\Data\PlayerConfigManager;
 use SSC\Data\VirtualStorageConfig;
-use SSC\Event\Cheat\XRay;
 use xenialdan\apibossbar\BossBar;
 
 class PlayerEvent {
@@ -99,7 +97,6 @@ class PlayerEvent {
 	 */
 	private $fish;
 
-
 	/**
 	 * @var int
 	 */
@@ -119,6 +116,10 @@ class PlayerEvent {
 	 * @var boolean
 	 */
 	private $wait=false;
+
+	private $sentTpp="";
+
+	private $sendTpp="";
 
 	/**
 	 * @var VirtualStorageConfig
@@ -969,6 +970,31 @@ class PlayerEvent {
 	public function addSpaceShipOreCount(string $ore,int $count=1){
 		$this->data["SPACESHIP_".$ore]+=$count;
 	}
+
+	public function getSentTppRequest():String{
+		return $this->sentTpp;
+	}
+
+	public function setSentTppRequest(String $name){
+		$this->sentTpp=$name;
+	}
+
+	public function resetSentTppRequest(){
+		$this->sentTpp='';
+	}
+
+	public function getSendTppRequest():String{
+		return $this->sendTpp;
+	}
+
+	public function setSendTppRequest(String $name){
+		$this->sendTpp=$name;
+	}
+
+	public function resetSendTppRequest(){
+		$this->sendTpp='';
+	}
+
 
 
 
