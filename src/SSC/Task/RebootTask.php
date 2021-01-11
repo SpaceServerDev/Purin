@@ -3,6 +3,7 @@
 namespace SSC\Task;
 
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\level\Level;
 use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\scheduler\Task;
 use pocketmine\entity\Entity;
@@ -31,6 +32,10 @@ class RebootTask extends Task{
 	 * @var int
 	 */
 	private $rank=0;
+	/**
+	 * @var array
+	 */
+	private $particles;
 
 
 	public function onRun($tick) {
@@ -269,6 +274,28 @@ class RebootTask extends Task{
 	private function Text(string $rname,string $rdata,string $unit="個") {
 		if(!$this->first){
 			$this->registerText();
+			$this->addTextParticles();
+		}
+		/**@var $part \pocketmine\level\particle\FloatingTextParticle*/
+		$count=0;
+		foreach ($this->particles as $part){
+			$title=$part->getTitle();
+			$text=$part->getText();
+			$part->setTitle("");
+			$part->setText("");
+			if($count<4){
+				Server::getInstance()->getLevelByName("world")->addParticle($part);
+			}else{
+				Server::getInstance()->getLevelByName("space")->addParticle($part);
+			}
+			$part->setTitle($title);
+			$part->setText($text);
+			if($count<4){
+				Server::getInstance()->getLevelByName("world")->addParticle($part);
+			}else{
+				Server::getInstance()->getLevelByName("space")->addParticle($part);
+			}
+			$count++;
 		}
 		$content = "";
 		$rank = 1;
@@ -312,5 +339,28 @@ class RebootTask extends Task{
 		$pk2->volume = 0.5;
 		$pk2->pitch = 1;
 		Server::getInstance()->broadcastPacket(Server::getInstance()->getLevelByName("mars")->getPlayers(), $pk2);
+	}
+
+	private function addFloatTextParticle(Level $level,Vector3 $pos,string $text,string $title){
+		$particle = new FloatingTextParticle($pos, $text, $title);
+		$level->addParticle($particle);
+		$this->particles[]=$particle;
+	}
+
+	private function addTextParticles(){
+		$world=Server::getInstance()->getLevelByName("world");
+		$space=Server::getInstance()->getLevelByName("space");
+		$this->addFloatTextParticle($world,new Vector3(9995.2,6.0,10039.4),"","大まかなサーバーの流れ！");
+		$this->addFloatTextParticle($world,new Vector3(9992.8,6.0,10039.5),"§bオープンワールド生活サーバーですので\n/warpで地球に向かい、木を取りましょう","§a1,最初の流れ");
+		$this->addFloatTextParticle($world,new Vector3(9989.3,7.0,10039.6),"§b/jobで仕事に付くとお金を稼げます。\n有効に活用しましょう！","§a2、jobでお金を貯めよう");
+		$this->addFloatTextParticle($world,new Vector3(9985.0,7.0,10039.6),"§a自由な生活サーバーで\nルールが複雑かもしれませんがきっとだいじょうぶ！","§a3,あとは存分に楽しもう！");
+		$this->addFloatTextParticle($space,new Vector3(224.6,100.2,391.2),"浮遊できるワールドです！\n§a浮けなくなったら/spawnをしてくださいね！","宇宙サーバーへようこそ！");
+		$this->addFloatTextParticle($space,new Vector3(226.7,103.2,379.8),"", "§aアスレチック！");
+		$this->addFloatTextParticle($space,new Vector3(208.7,100.7,391.1),"§d↓宇宙へ飛び立てます。","§aハッチ");
+		$this->addFloatTextParticle($space,new Vector3(203.9,94.4,385.3),"","§c太陽系はこちらです。");
+		$this->addFloatTextParticle($space,new Vector3(191.6,101.0,391.0),"","§bこちらからPVPエリアへ向かえます!");
+		$this->addFloatTextParticle($space,new Vector3(223.3,107.3,390.7),"","牢屋");
+		$this->addFloatTextParticle($space,new Vector3(211.4,94.0,391.0),"§bロケットに乗り換えて\n他の惑星に行きます","§aショートカット");
+		$this->addFloatTextParticle($space, new Vector3(190.1,118.7,438.7),"座りながらゆったりどうぞ","釣り堀！");
 	}
 }

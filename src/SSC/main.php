@@ -4,6 +4,8 @@ namespace SSC;
 
 use pocketmine\entity\Entity;
 
+use pocketmine\level\Level;
+use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\Player;
@@ -192,6 +194,8 @@ class main extends PluginBase implements Listener {
 	 */
 	public $otosidama;
 
+	private $floatingSetting=false;
+
 	public function onEnable() {
 		$this->registerEvents();
 		BaseCommandMap::init($this);
@@ -325,6 +329,8 @@ class main extends PluginBase implements Listener {
 		$entity->spawnToAll();
 		$this->patimon=$entity;
 	}
+
+
 
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		new AllCommands($this,$sender,$command->getName(),$args);
@@ -509,6 +515,8 @@ class main extends PluginBase implements Listener {
 			return false;
 	}
 
+
+
 	public static function isBanItem(int $id){
 		switch ($id){
 			case 10:
@@ -523,6 +531,14 @@ class main extends PluginBase implements Listener {
 				return true;
 		}
 		return false;
+	}
+
+	public function isFloatingSetting():bool{
+		return $this->floatingSetting;
+	}
+
+	public function changeFloatingSetting(){
+		$this->floatingSetting=true;
 	}
 
 	public function getServerReloadTick():int{

@@ -22,7 +22,7 @@ class WarpListForm implements Form {
 		if(!is_numeric($data)){
 			return;
 		}
-		$cmd=["spawn","space 1","earth","flat","respawn","pvp 1","rule","taucetuse","taucetusf","neptune","mars","sun","moon","pluto","blackhole","trappist-1e"];
+		$cmd=["spawn","space 1","earth","town","flat","pvp 1","rule","taucetuse","taucetusf","neptune","mars","sun","moon","pluto","blackhole","trappist-1e","respawn"];
 		main::getMain()->getServer()->dispatchCommand($player, $cmd[$data]);
 	}
 
@@ -38,8 +38,8 @@ class WarpListForm implements Form {
 			['text' => "ロビー",],
 			['text' => "宇宙",],
 			['text' => "地球",],
+			['text' => "街",],
 			['text' => "人工惑星",],
-			['text' => "リスポーン",],
 			['text' => "pvp",],
 			['text' => "ルール場へ",],
 			['text' => "くじら座τ星e",],
@@ -50,7 +50,8 @@ class WarpListForm implements Form {
 			['text' => "月",],
 			['text' => "冥王星",],
 			['text' => "ブラックホール",],
-			['text' => "トラピスト1星e",],
+			['text' => "トラピスト1星e",]
+			,['text' => "リスポーン",],
 		];
 		return [
 			'type'=>'form',
