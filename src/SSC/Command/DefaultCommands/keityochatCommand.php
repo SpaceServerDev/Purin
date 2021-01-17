@@ -7,11 +7,12 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\utils\CommandException;
 use pocketmine\Player;
 use pocketmine\Server;
+use SSC\main;
 
-class opchatCommand extends VanillaCommand {
+class keityochatCommand extends VanillaCommand {
 
 	public function __construct() {
-		parent::__construct("opchat","Staffのみ見れる重要事項を送信","/opchat [message]");
+		parent::__construct("keityochat","警長以上のみ見れる重要事項を送信","/keityouchat [message]");
 	}
 
 	/**
@@ -22,11 +23,15 @@ class opchatCommand extends VanillaCommand {
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		if (!$sender instanceof Player) return false;
-		if (!$sender->isOp()) return false;
+		$permission = main::getPlayerData($sender->getName())->getNumberPerm();
+		if ($permission<1) return false;
 		if (!isset($args[0])) return false;
 		$name = $sender->getName();
 		$chat = implode(" ", $args);
-		foreach (Server::getInstance()->getOnlinePlayers() as $player) if ($player->isOp()) $player->sendMessage("<§a{$name}§r>→<§eop全員§r> {$chat}");
+		foreach (Server::getInstance()->getOnlinePlayers() as $player){
+			$permission = main::getPlayerData($player->getName())->getNumberPerm();
+			if ($permission>=2) $player->sendMessage("<§a{$name}§r>→<§e警長以上全員§r> {$chat}");
+		}
 		return true;
 	}
 }

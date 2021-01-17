@@ -4,11 +4,11 @@
 namespace SSC\Gun\Task;
 
 
+use pocketmine\level\Level;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use SSC\Gun\GunEvent;
-use SSC\Gun\GunManager;
 use SSC\main;
 
 class ReloadTask extends Task {
@@ -52,12 +52,14 @@ class ReloadTask extends Task {
 	 */
 	public function onRun(int $currentTick) {
 		main::getMain()->getGunManager()->getGunData($this->gun,$this->serial)->endCoolDown();
-		if($this->reload) {
-			$pk = new TextPacket();
-			$pk->type = 4;
-			$pk->message = $this->gun . " Reload Complete";
-			$this->player->dataPacket($pk);
-			$this->event->sound("music.machinegun-magazine-set1",$this->player->getFloorX(),$this->player->getFloorY(),$this->player->getFloorZ(),$this->player->getLevel());
+		if($this->player->getLevel() instanceof Level) {
+			if ($this->reload) {
+				$pk = new TextPacket();
+				$pk->type = 4;
+				$pk->message = $this->gun . " Reload Complete";
+				$this->player->dataPacket($pk);
+				$this->event->sound("music.machinegun-magazine-set1", $this->player->getFloorX(), $this->player->getFloorY(), $this->player->getFloorZ(), $this->player->getLevel());
+			}
 		}
 		$this->getHandler()->cancel();
 		return;

@@ -20,7 +20,7 @@ commands:
  hitokoto:
    usage:
    description: "一言メッセージを変えれます"
- parm:
+ perm:
    usage:
    description: ""
  job:

@@ -97,7 +97,7 @@ class AllCommands implements Listener{
 					$playerdata->customForm("§dprofile",$formdata,78788);
 				break;
 
-				case "parm":
+				case "perm":
 					if($sender->isOp()) {
 						$formdata = [
 							["type" => "input",

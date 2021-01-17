@@ -107,9 +107,13 @@ class testCommand extends VanillaCommand {
 
 			$item=JimSniperV2::get();
 			$sender->getInventory()->addItem($item);
+
+			//main::getMain()->addEXP($sender, 500000);
 			$pk=new OnScreenTextureAnimationPacket();
 			$pk->effectId=27;
 			$sender->sendDataPacket($pk);
+
+
 		}
 
 

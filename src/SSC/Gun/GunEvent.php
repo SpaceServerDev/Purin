@@ -92,21 +92,23 @@ class GunEvent implements Listener {
 								main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->RocketShootEvent($player, $gundata)), 0.2);
 								$this->sound("music.missile1", $player->getFloorX(), $player->getFloorY(), $player->getFloorZ(), $player->getLevel());
 							}
-							$motion = $player->getDirectionVector()->multiply(-$gundata->getRecoil());
-							$player->setMotion($motion);
+							if($player->getLevel()->getFolderName()!=="world") {
+								$motion = $player->getDirectionVector()->multiply(-$gundata->getRecoil());
+								$player->setMotion($motion);
 
-							$pk = new MovePlayerPacket();
-							$pk->entityRuntimeId = $player->getId();
-							$pk->position = $player->getPosition();
-							$pk->yaw = $player->getYaw();
-							$pk->pitch = $player->getPitch() - 2;
-							$pk->headYaw = $player->getYaw() - 2;
-							$pk->mode = MovePlayerPacket::MODE_PITCH;
-							$pk->onGround = $player->isOnGround();
-							$pk->entityRuntimeId = $player->getId();
-							$player->sendDataPacket($pk);
-							$player->resetFallDistance();
-							$player->setForceMovementUpdate();
+								$pk = new MovePlayerPacket();
+								$pk->entityRuntimeId = $player->getId();
+								$pk->position = $player->getPosition();
+								$pk->yaw = $player->getYaw();
+								$pk->pitch = $player->getPitch() - 2;
+								$pk->headYaw = $player->getYaw() - 2;
+								$pk->mode = MovePlayerPacket::MODE_PITCH;
+								$pk->onGround = $player->isOnGround();
+								$pk->entityRuntimeId = $player->getId();
+								$player->sendDataPacket($pk);
+								$player->resetFallDistance();
+								$player->setForceMovementUpdate();
+							}
 							$ammo = "";
 							$now = $gundata->getAmmo();
 							for ($i = 0; $i < $now; $i++) {

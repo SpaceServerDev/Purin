@@ -7,10 +7,12 @@ namespace SSC\Command;
 use Pocketmine\Server;
 use SSC\Command\DefaultCommands\eventitemCommand;
 use SSC\Command\DefaultCommands\expertmodeCommand;
+use SSC\Command\DefaultCommands\keityochatCommand;
 use SSC\Command\DefaultCommands\moonCommand;
 use SSC\Command\DefaultCommands\naviCommand;
 use SSC\Command\DefaultCommands\otosidamaCommand;
 use SSC\Command\DefaultCommands\plutoCommand;
+use SSC\Command\DefaultCommands\policechatCommand;
 use SSC\Command\DefaultCommands\spaceshipCommand;
 use SSC\Command\DefaultCommands\tpcancelCommand;
 use SSC\Command\DefaultCommands\tradeCommand;
@@ -64,6 +66,7 @@ use SSC\Command\DefaultCommands\tpagreeCommand;
 use SSC\Command\DefaultCommands\tpdisCommand;
 use SSC\Command\DefaultCommands\tppCommand;
 use SSC\Command\DefaultCommands\unregisterCommand;
+use SSC\Command\DefaultCommands\vipchatCommand;
 use SSC\Command\DefaultCommands\warpCommand;
 use SSC\Command\DefaultCommands\WorldWarpCommand;
 use SSC\Command\DefaultCommands\xtpCommand;
@@ -155,7 +158,10 @@ class BaseCommandMap {
 		Server::getInstance()->getCommandMap()->register(self::pm,new naviCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm,new moonCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm,new plutoCommand());
-		Server::getInstance()->getCommandMap()->register(self::pm,new otosidamaCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new policechatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new keityochatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new vipchatCommand());
+		//Server::getInstance()->getCommandMap()->register(self::pm,new otosidamaCommand());
 
 
 	}
