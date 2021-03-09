@@ -704,7 +704,7 @@ class ShopCommandReturn implements Listener {
 							'text' => "赤紫のテラコッタ §e(￥6/個)",
 						]; //159,159:2
 						$buttons[] = [
-							'text' => "水色のテラコッタ §e(￥6/個)",
+							'text' => "空色のテラコッタ §e(￥6/個)",
 						]; //160,159:3
 						$buttons[] = [
 							'text' => "黄色のテラコッタ §e(￥6/個)",
@@ -722,7 +722,7 @@ class ShopCommandReturn implements Listener {
 							'text' => "薄灰色のテラコッタ §e(￥6/個)",
 						]; //165,159:8
 						$buttons[] = [
-							'text' => "空色のテラコッタ §e(￥6/個)",
+							'text' => "水色のテラコッタ §e(￥6/個)",
 						]; //166,159:9
 						$buttons[] = [
 							'text' => "紫のテラコッタ §e(￥6/個)",
@@ -1322,8 +1322,8 @@ class ShopCommandReturn implements Listener {
 								$this->Main->itemprice[$name] = 10;
 								break;
 							case 4:
-								$this->Main->itemid[$name] = 3;
-								$this->Main->itemdamage[$name] = 2;
+								$this->Main->itemid[$name] = 243;
+								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "ポドソル";
 								$this->Main->itemprice[$name] = 20;
 								break;
@@ -1634,13 +1634,13 @@ class ShopCommandReturn implements Listener {
 								$this->Main->itemprice[$name] = 30;
 								break;
 							case 40:
-								$this->Main->itemid[$name] = 196;
+								$this->Main->itemid[$name] = 430;
 								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "アカシアのドア";
 								$this->Main->itemprice[$name] = 30;
 								break;
 							case 41:
-								$this->Main->itemid[$name] = 197;
+								$this->Main->itemid[$name] = 431;
 								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "ダークオークのドア";
 								$this->Main->itemprice[$name] = 30;
@@ -2386,7 +2386,7 @@ class ShopCommandReturn implements Listener {
 							case 9:
 								$this->Main->itemid[$name] = 159;
 								$this->Main->itemdamage[$name] = 9;
-								$this->Main->itemname[$name] = "薄灰色のテラコッタ";
+								$this->Main->itemname[$name] = "水色のテラコッタ";
 								$this->Main->itemprice[$name] = 6;
 								break;
 							case 10:

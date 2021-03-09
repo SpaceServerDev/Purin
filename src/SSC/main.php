@@ -35,6 +35,7 @@ use onebone\economyapi\EconomyAPI;
 
 use SSC\Command\BaseCommandMap;
 use SSC\Core\version;
+use SSC\Data\EXShop;
 use SSC\Data\FishSizeConfig;
 use SSC\Data\RankConfig;
 use SSC\Entity\PatimonEntity;
@@ -55,6 +56,7 @@ use SSC\Event\player\PreLoginEvent;
 use SSC\Event\player\QuitEvent;
 use SSC\Event\player\RespawnEvent;
 use SSC\Event\player\ToggleFlightEvent;
+use SSC\Event\player\ToggleSneakEvent;
 use SSC\Event\player\TouchEvent;
 use SSC\Event\Tile\SignChange;
 use bboyyu51\pmdiscord\Sender;
@@ -196,6 +198,12 @@ class main extends PluginBase implements Listener {
 
 	private $floatingSetting=false;
 
+	private $token=[];
+
+	private static $exshop;
+
+
+
 	public function onEnable() {
 		$this->registerEvents();
 		BaseCommandMap::init($this);
@@ -210,6 +218,8 @@ class main extends PluginBase implements Listener {
 		$this->setConfig();
 		$this->sendAA();
 		$this->getScheduler()->scheduleRepeatingTask(new RebootTask(), 20);
+		//self::$exshop=new EXShop();
+		//self::$exshop->init();
 		$this->sendDiscord("OPEN","宇宙サーバーが開いたよ！");
 		Entity::registerEntity(PatimonEntity::class, true);
 		if(!$this->npc->exists("spawned")) {
@@ -263,8 +273,9 @@ class main extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents(new CommandPreProcessEvent(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new ToggleFlightEvent(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new Nuker(),$this);
-		$this->getServer()->getPluginManager()->registerEvents(new XRay(),$this);
+		//$this->getServer()->getPluginManager()->registerEvents(new XRay(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new GunEvent(),$this);
+		$this->getServer()->getPluginManager()->registerEvents(new ToggleSneakEvent(),$this);
 	}
 
 	private function sendAA(){
@@ -329,6 +340,7 @@ class main extends PluginBase implements Listener {
 		$entity->spawnToAll();
 		$this->patimon=$entity;
 	}
+
 
 
 
@@ -515,6 +527,10 @@ class main extends PluginBase implements Listener {
 			return false;
 	}
 
+	public function getShop():array{
+		return $this->shop;
+	}
+
 
 
 	public static function isBanItem(int $id){
@@ -549,6 +565,10 @@ class main extends PluginBase implements Listener {
 		$this->reload--;
 	}
 
+	public static function getEXShop(){
+		return self::$exshop;
+	}
+
 
 	public function registerRanking(PlayerEvent $pe){
 		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level","spaceshipsize"];
@@ -565,6 +585,21 @@ class main extends PluginBase implements Listener {
 
 	public function getVirtualStorage():\SQLite3{
 		return $this->vs;
+	}
+
+	public function addToken($token){
+		$this->token[]=$token;
+		//var_dump($this->token);
+	}
+
+	public function removeToken($token){
+		$array=array_diff($this->token,array($token));
+		$this->token=array_values($array);
+		//var_dump($this->token);
+	}
+
+	public function existsToken($token){
+		return in_array($token,$this->token);
 	}
 
 	public function onDisable() {

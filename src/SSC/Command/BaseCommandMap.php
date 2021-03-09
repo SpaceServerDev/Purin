@@ -10,10 +10,12 @@ use SSC\Command\DefaultCommands\expertmodeCommand;
 use SSC\Command\DefaultCommands\keityochatCommand;
 use SSC\Command\DefaultCommands\moonCommand;
 use SSC\Command\DefaultCommands\naviCommand;
+use SSC\Command\DefaultCommands\optionCommand;
 use SSC\Command\DefaultCommands\otosidamaCommand;
 use SSC\Command\DefaultCommands\plutoCommand;
 use SSC\Command\DefaultCommands\policechatCommand;
 use SSC\Command\DefaultCommands\spaceshipCommand;
+use SSC\Command\DefaultCommands\tokenCommand;
 use SSC\Command\DefaultCommands\tpcancelCommand;
 use SSC\Command\DefaultCommands\tradeCommand;
 use SSC\Command\DefaultCommands\advancemodeCommand;
@@ -161,6 +163,8 @@ class BaseCommandMap {
 		Server::getInstance()->getCommandMap()->register(self::pm,new policechatCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm,new keityochatCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm,new vipchatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new tokenCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new optionCommand());
 		//Server::getInstance()->getCommandMap()->register(self::pm,new otosidamaCommand());
 
 

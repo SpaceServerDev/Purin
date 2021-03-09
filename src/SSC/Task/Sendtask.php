@@ -60,7 +60,7 @@ class Sendtask extends Task{
 				}
 			}
 			if ($armor->getBoots()->getCustomName() == "§bヘルメスの靴") {
-				if($player->getLevel()->getFolderName()!="pvp"){
+				if ($player->getLevel()->getFolderName() != "pvp") {
 					if ($player->hasEffect(1)) {
 						$player->removeEffect(1);
 					}
@@ -68,7 +68,7 @@ class Sendtask extends Task{
 			}
 		}
 
-		if($playerdata->getWait()){
+		if ($playerdata->getWait()) {
 			$playerdata->setWait(false);
 		}
 
@@ -90,18 +90,18 @@ class Sendtask extends Task{
 			$minutes = floor(($times / 60) % 60);
 			$seconds = $times % 60;
 			$job = $playerdata->getjob();
-			if($job==="高度整地師"){
-				$job="高整";
+			if ($job === "高度整地師") {
+				$job = "高整";
 			}
 			$kouseki = $playerdata->getNowOre();
 			$mokuteki = $playerdata->getMaxOre();
 			$kpn = 0;
-			$d1=$playerdata->getDairy1();
-			$d2=$playerdata->getDairy2();
-			$d3=$playerdata->getDairy3();
-			$dn1=$playerdata->getNowDairy1();
-			$dn2=$playerdata->getNowDairy2();
-			$dn3=$playerdata->getNowDairy3();
+			$d1 = $playerdata->getDairy1();
+			$d2 = $playerdata->getDairy2();
+			$d3 = $playerdata->getDairy3();
+			$dn1 = $playerdata->getNowDairy1();
+			$dn2 = $playerdata->getNowDairy2();
+			$dn3 = $playerdata->getNowDairy3();
 			if ($player->getLevel()->getFolderName() == "pvp") {
 				foreach ($player->getServer()->getOnlinePlayers() as $kps) {
 					if ($kps->getLevel()->getFolderName() == "pvp") {
@@ -118,10 +118,17 @@ class Sendtask extends Task{
 				$this->sendData($player, "§5再起動まで: {$minutes}:{$seconds}", 1);
 				$this->sendData($player, "§cキルストリーク: {$ks}", 2);
 				$this->sendData($player, "§cエリア内: {$kpn}人", 3);
-				$this->sendDairyData($player,$d1,$dn1,21);
-				$this->sendDairyData($player,$d2,$dn2,22);
-				$this->sendDairyData($player,$d3,$dn3,23);
+				$this->sendDairyData($player, $d1, $dn1, 21);
+				$this->sendDairyData($player, $d2, $dn2, 22);
+				$this->sendDairyData($player, $d3, $dn3, 23);
 			} else {
+				if ($player->getLevel()->getFolderName() == "moon") {
+					foreach ($player->getServer()->getOnlinePlayers() as $kps) {
+						if ($kps->getLevel()->getFolderName() == "moon") {
+							++$kpn;
+						}
+					}
+				}
 				$this->RemoveData($player);
 				$this->setupData($player);
 				$this->sendData($player, "§e所持金: {$mymoney}￥", 0);
@@ -134,43 +141,71 @@ class Sendtask extends Task{
 				$this->sendData($player, "§c掘った鉱石: {$kouseki}/{$mokuteki}", 7);
 				$this->sendData($player, "§5次の掃除: {$souji}秒後", 8);
 				$this->sendData($player, "§5再起動まで: {$hours}:{$minutes}:{$seconds}", 9);
-				$this->sendDairyData($player,$d1,$dn1,21);
-				$this->sendDairyData($player,$d2,$dn2,22);
-				$this->sendDairyData($player,$d3,$dn3,23);
-				if ($this->main->isDrops($player)) {
-					$this->sendData($player, "§4ノードロップ", 10);
+				$this->sendDairyData($player, $d1, $dn1, 21);
+				$this->sendDairyData($player, $d2, $dn2, 22);
+				$this->sendDairyData($player, $d3, $dn3, 23);
+
+				if (main::getMain()->isDrops($player)) $this->sendData($player, "§4ノードロップ", 10);
+
+				if ($player->getLevel()->getFolderName() === "moon") $this->sendData($player, "§cエリア内: {$kpn}人", 11);
+
+
+			}
+
+
+			if ($player->getInventory()->getItemInHand()->getId() === 346) {
+				switch ($this->getFishFeed($player)) {
+					case 0:
+						$feed = "なし";
+						break;
+					case 1:
+						$feed = "ダイヤ";
+						break;
+					case 2:
+						$feed = "金";
+						break;
+					case 3:
+						$feed = "鉄";
+						break;
+					case 4:
+						$feed = "ミミズ";
+						break;
+					case 5:
+						$feed = "パン";
+						break;
+					case 6:
+						$feed = "薬";
+						break;
 				}
-				if($player->getInventory()->getItemInHand()->getId()===346){
-					switch($this->getFishFeed($player)){
-						case 0:
-							$feed="なし";
-						break;
-						case 1:
-							$feed="ダイヤ";
-						break;
-						case 2:
-							$feed="金";
-						break;
-						case 3:
-							$feed="鉄";
-						break;
-						case 4:
-							$feed="ミミズ";
-						break;
-						case 5:
-							$feed="パン";
-						break;
-						case 6:
-							$feed="薬";
-						break;
-					}
-					$this->sendData($player, "§a餌:{$feed}", 11);
-				}
+				$this->sendData($player, "§a餌:{$feed}", 13);
 			}
 		} else {
 			$this->RemoveData($player);
 		}
-		$this->sendBossbarData($player);
+
+		if ($playerdata->getLevelDisplay()) {
+			$this->sendBossbarData($player);
+		} else {
+			$bar = $playerdata->getBossbar();
+			$bar->removePlayer($player);
+			if (!$playerdata->getLevelDisplay()) {
+				$level = $playerdata->getLevel();
+				$zero = $playerdata->getTotalExp();
+				$exp = $playerdata->getExp();
+				if ($playerdata->isNormalLevel()) {
+					$lt = floor($level * 1.1);
+					$leveltable = (30 * $lt) + $zero;
+				} else if ($playerdata->isAdvanceLevel()) {
+					$lt = floor($level * 1.3);
+					$leveltable = (120 * $lt) + $zero;
+				} else if ($playerdata->isExpertLevel()) {
+					$lt = floor($level * 1.5);
+					$leveltable = (250 * $lt) + $zero;
+				}
+				$exp=(int)$leveltable - (int)$exp;
+				$this->sendData($player, "次のレベルまで：" .$exp, 12);
+			}
+		}
 	}
 
 	function sendBossbarData(Player $player){
@@ -193,10 +228,11 @@ class Sendtask extends Task{
 			$b = $leveltable - $zero;
 			$keiken = $a / $b;
 			$bar = $playerdata->getBossbar();
-			$bar->setTitle("経験値 {$exp} / {$leveltable}")->setSubTitle("名前:{$name} レベル:{$level}")->setPercentage($keiken);
+			$bar->removePlayer($player);
+			$bar->setTitle("経験値 {$exp} / {$leveltable}")->setSubTitle("名前:{$name} レベル:{$level}")->setPercentage($keiken)->addPlayer($player);
 		}
 
-	function setupData(Player $player){
+	private function setupData(Player $player){
 		$pk = new SetDisplayObjectivePacket();
 		$pk->displaySlot = "sidebar";
 		$pk->objectiveName = "sidebar";
@@ -215,7 +251,7 @@ class Sendtask extends Task{
 
 	}
 
-	function sendDairyData(Player $player,String $data,int $score,int $id){
+	private function sendDairyData(Player $player,String $data,int $score,int $id){
 		$displaySlot = "list";
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = $displaySlot;
@@ -229,7 +265,7 @@ class Sendtask extends Task{
 		$player->sendDataPacket($pk);
 	}
 
-	function sendData(Player $player,String $data,int $id) {
+	private function sendData(Player $player,String $data,int $id) {
 		$displaySlot = "sidebar";
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = $displaySlot;

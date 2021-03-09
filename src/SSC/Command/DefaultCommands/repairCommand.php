@@ -15,7 +15,7 @@ use pocketmine\Player;
 class repairCommand extends VanillaCommand {
 
 	public function __construct() {
-		parent::__construct("repair", "80円×ダメージ値で修復します", "/repair");
+		parent::__construct("repair", "修復クリームを使用し、アイテムを修復します。", "/repair");
 	}
 
 	/**

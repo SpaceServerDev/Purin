@@ -32,7 +32,8 @@ class BuyForm implements Form {
 				foreach ($cls->getAllMarket() as $id){
 					$buttons[]=$cls->getMarketData($id);
 				}
-				$player->sendForm(new ResultSerachIDForm($buttons));
+				$buttons_reverse=array_reverse($buttons);
+				$player->sendForm(new ResultSerachIDForm($buttons_reverse,"0ページ"));
 				return;
 		}
 		$player->sendForm(new MainForm());
@@ -172,32 +173,79 @@ class ResultSerachIDForm implements Form{
 	 */
 	private $content;
 
-	public function __construct(array $button,string $content="") {
+	/**
+	 * @var int
+	 */
+	private $page;
+
+	/**
+	 * @var int
+	 */
+	private $count;
+
+	/**
+	 * @var array
+	 */
+	private $id;
+
+	public function __construct(array $button,string $content="",$page=0) {
 		$this->button=$button;
 		$this->content=$content;
+		$this->page=$page;
+		$this->count=0;
+		$this->id=[];
 	}
 
 
 	public function handleResponse(Player $player, $data): void {
 		if(!is_numeric($data)) return;
-		$market=$this->button[$data];
+		$page=$this->page;
+		$backpage=$page-1;
+		$nextpage=$page+1;
+		$page_low=$page*10;
+		$page_max=$page_low+10;
+		if($data===$this->count+1){
+			if(isset($this->button[$page_max+1])) {
+				$player->sendForm(new self($this->button,$nextpage."ページ",$nextpage));
+			}else{
+				$player->sendForm(new self($this->button,$backpage."ページ",$backpage));
+			}
+			return;
+		}
+		if($data===$this->count+2){
+			$player->sendForm(new self($this->button,$backpage."ページ",$backpage));
+			return;
+		}
+		$cls=new tradeConfig();
+		$market=$cls->getMarketData($this->id[$data]);
 		if($market["price"]>EconomyAPI::getInstance()->myMoney($player->getName())){
 			$player->sendForm(new self($this->button,$content="§aお金が足りません"));
 			return;
 		}
-		$player->sendForm(new ConfirmSerachIDForm($this->button[$data]["id"],EconomyAPI::getInstance()->myMoney($player->getName())));
+		$player->sendForm(new ConfirmSerachIDForm($this->id[$data],EconomyAPI::getInstance()->myMoney($player->getName())));
 
 	}
 
 	public function jsonSerialize() {
-		foreach ($this->button as $data) {
+		$count=0;
+		$page=$this->page;
+		$page_low=$page*10;
+		$page_max=$page_low+10;
+		for($i=$page_low; $i < $page_max; $i++){
+			if(!isset($this->button[$i])) continue;
+			if($i!==$page_low) $count++;
+			$data=$this->button[$i];
 			$item = Item::nbtDeserialize(unserialize($data["nbt"]));
 			$name = $item->getName()."§r";
+			$this->id[]=$data["id"];
 			$button[]=['text'=>"{$name} : {$item->getCount()}個\n{$data["price"]}￥ ItemID_Damage:{$item->getId()}_{$item->getDamage()} {$data["player"]}さん出品 ID:{$data["id"]}"];
 		}
+		$this->count=$count;
+		if(isset($this->button[$page_max+1])) $button[]=['text'=>"次へ"];
+		if(isset($this->button[$page_low-1])) $button[]=['text'=>"戻る"];
 		return [
 			"type"=>'form',
-			"title"=>"§l§aSSTRADESTATION.com/buy/{$item->getId()}/{$item->getDamage()}",
+			"title"=>"§l§aSSTRADESTATION.com/buy/",
 			"content"=>$this->content,
 			"buttons"=>$button,
 		];
@@ -255,8 +303,18 @@ class ConfirmSerachIDForm implements Form{
 			}
 			$player->sendForm(new SearchIDForm());
 			return;
-		}else{
-			$player->sendMessage("[§aTRADE§r] 残念ながら買われてしまったようです");
+		}else {
+			$cls = new tradeConfig();
+			if ($cls->getAllMarket() == null) {
+				$player->sendMessage("[§aTRADE§r] フリーマーケットがありません");
+				return;
+			}
+			foreach ($cls->getAllMarket() as $id) {
+				$buttons[] = $cls->getMarketData($id);
+			}
+			$buttons_reverse = array_reverse($buttons);
+			$player->sendForm(new ResultSerachIDForm($buttons_reverse, "1ページ"));
+			return;
 		}
 	}
 	public function jsonSerialize() {

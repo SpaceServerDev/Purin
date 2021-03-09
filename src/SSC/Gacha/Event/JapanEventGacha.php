@@ -7,6 +7,7 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use SSC\Gacha\Gacha;
+use SSC\Item\FallenAngelWings_Elytra;
 
 class JapanEventGacha implements Gacha{
 
@@ -112,9 +113,7 @@ class JapanEventGacha implements Gacha{
 				$item->addEnchantment(new EnchantmentInstance($enchantment, 15));
 				return [$item,3,"§d天狗の鉞(てんぐのまさかり)"];
 			case 10:
-				$item = Item::get(444, 0, 1);
-				$item->setCustomName("§a堕天使の翼");
-				return [$item,3,"§a堕天使の翼"];
+				return [FallenAngelWings_Elytra::get(),3,"§a堕天使の翼"];
 		}
 		return [];
 	}

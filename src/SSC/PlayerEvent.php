@@ -126,6 +126,8 @@ class PlayerEvent {
 	 */
 	private $vs;
 
+	private $level_display=true;
+
 	/**
 	 * PlayerEvent constructor.
 	 * @param main $main
@@ -492,7 +494,7 @@ class PlayerEvent {
 			}
 		}
 		if ($this->data["LEVELMODE"] === 1) {
-			if ($this->getLevel() == 1000) {
+			if ($this->getLevel() === 1000) {
 				$leve = "§l☆MAX☆§r";
 			}
 		}
@@ -1072,7 +1074,7 @@ class PlayerEvent {
 				$nmbr = 1;
 				$this->data["MAXTABLEEXP"] = $this->data["MAXTABLEEXP"] + $nmbr;
 				$this->data["EXP"] = $this->data["EXP"] + $nmbr;
-				if ($this->data["LEVEL"] < 500) {
+				if ($this->data["LEVEL"] < 1000) {
 					if ($this->data["MAXTABLEEXP"] >= $leveltable) {
 						$this->data["OLDTABLEEXP"] = $this->data["OLDTABLEEXP"] + $this->data["MAXTABLEEXP"];
 						$this->data["MAXTABLEEXP"] = 0;
@@ -1098,6 +1100,13 @@ class PlayerEvent {
 		$this->load=true;
 	}
 
+	public function getLevelDisplay(){
+		return $this->level_display;
+	}
+
+	public function changeLevelDisplay(bool $bool){
+		$this->level_display=$bool;
+	}
 	/**
 	 * @param int $money
 	 */

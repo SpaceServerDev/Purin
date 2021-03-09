@@ -18,13 +18,12 @@ class ChatEvent implements Listener {
 	public function onPCE(PlayerChatEvent $event) {
 		 $player = $event->getPlayer();
 		 $name = $player->getName();
-		 if (main::getMain()->login[$name]==1) {
-				 $player->sendForm(new CheckPasswordForm());
-				 main::getMain()->login[$name] = 1;
-				 $player->setImmobile(true);
-				 $event->setCancelled();
+		 main::getMain()->playerlist->reload();
+		 if (!main::getMain()->playerlist->exists($name)) {
+			 $player->sendForm(new CheckPasswordForm());
+			 $player->setImmobile(true);
+			 $event->setCancelled();
 		 }
-
 		 $msg=$event->getMessage();
 		 $message=str_replace("@","あっとまあく ",$msg);
 		 $message_t=str_replace("＠","あっとまあく ",$message);

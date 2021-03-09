@@ -337,14 +337,14 @@ Class ItemData{
 		"ID" => 21,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリ鉱石",
-		"PRICE" => 100
+		"PRICE" => 150
 	];
 
 	const Lapis_Block = [
 		"ID" => 22,
 		"DAMAGE" => 0,
 		"NAME" => "ラピスラズリのブロック",
-		"PRICE" => 900
+		"PRICE" => 1350
 	];
 
 	const Dispenser = [
@@ -1028,14 +1028,14 @@ Class ItemData{
 		"ID" => 56,
 		"DAMAGE" => 0,
 		"NAME" => "ダイヤモンド鉱石",
-		"PRICE" => 3000
+		"PRICE" => 6000
 	];
 
 	const Diamond_Block = [
 		"ID" => 57,
 		"DAMAGE" => 0,
 		"NAME" => "ダイヤモンドブロック",
-		"PRICE" => 35000
+		"PRICE" => 54000
 	];
 
 	const Crafting_Table = [
@@ -2216,7 +2216,7 @@ Class ItemData{
 		"ID" => 173,
 		"DAMAGE" => 0,
 		"NAME" => "石炭ブロック",
-		"PRICE" => 450
+		"PRICE" => 500
 	];
 
 

@@ -56,7 +56,7 @@ class QuitEvent implements Listener {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§aopによる強制退出§eで§7§lオフライン§r§eになりました");
 		} else if ($re === "timeout") {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§aネットワークの不安定により§a§7§lオフライン§r§eになりました");
-		} else if ($re === "サーバーのホームページを読んできてください！\nルールのページにパスワードが書いてあります！\nhttp://yurisi.space/") {
+		} else if ($re === "サーバーのホームページにディスコードへ\n参加できるリンクがあります！\nhttp://yurisi.space/\nわからないことがあればツイッターの@Dev_yrsまで！") {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§a新規ルール未読により§a§7§lオフライン§r§eになりました");
 		} else {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§a" . $re . "§eで§7§lオフライン§r§eになりました");

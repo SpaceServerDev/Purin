@@ -34,34 +34,35 @@ class RaffleSlotForm implements Form {
 		$g = mt_rand(1, 6);
 		$h = mt_rand(1, 6);
 		$i = mt_rand(1, 6);
-		if ($a == $b && $b == $c) {
+		if ($a === $b && $b === $c) {
 			$gm = $gm + 1500;
 		}
-		if ($d == $e && $e == $f) {
+		if ($d === $e && $e === $f) {
 			$gm = $gm + 1500;
 		}
-		if ($g == $h && $h == $i) {
+		if ($g === $h && $h === $i) {
 			$gm = $gm + 1500;
 		}
-		if ($a == $e && $e == $i) {
+		if ($a === $e && $e === $i) {
 			$gm = $gm + 1500;
 		}
-		if ($c == $e && $e == $g) {
+		if ($c === $e && $e === $g) {
 			$gm = $gm + 1500;
 		}
-		if ($a == $d && $d == $g) {
+		if ($a === $d && $d === $g) {
 			$gm = $gm + 1500;
 		}
-		if ($b == $e && $e == $h) {
+		if ($b === $e && $e === $h) {
 			$gm = $gm + 1500;
 		}
-		if ($c == $f && $f == $i) {
+		if ($c === $f && $f === $i) {
 			$gm = $gm + 1500;
 		}
+
 		if ($gm === 0) {
-			$msg = "ハズレ...";
+			$msg = "ハズレ...\n{$a} {$b} {$c}\n{$d} {$e} {$f}\n{$g} {$h} {$i}";
 		} else {
-			$msg = "§aあたり！{$gm}円ゲット！§e";
+			$msg = "§aあたり！{$gm}円ゲット！\n{$a} {$b} {$c}\n{$d} {$e} {$f}\n{$g} {$h} {$i}";
 			EconomyAPI::getInstance()->addMoney($player->getName(), $gm);
 		}
 		main::getPlayerData($player->getName())->addVar("SLOT");

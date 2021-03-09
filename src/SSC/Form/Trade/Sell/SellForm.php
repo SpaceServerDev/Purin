@@ -11,7 +11,7 @@ use SSC\Form\Trade\MainForm;
 class SellForm implements Form {
 
 	public function handleResponse(Player $player, $data): void {
-		if(!is_numeric($data)) return;
+		if (!is_numeric($data)) return;
 		switch ($data) {
 			case 0:
 				$player->sendForm(new SellRegisterForm($player));
@@ -80,7 +80,7 @@ class SellRegisterForm implements Form {
 	}
 
 	public function handleResponse(Player $player, $data): void {
-		if($data==false) return;
+		if(!$data) return;
 		if(!$this->list[$data[1]] instanceof Item){
 			$player->sendForm(new self($player,"§c不明なエラーです。やり直してください。"));
 			return;
@@ -89,8 +89,22 @@ class SellRegisterForm implements Form {
 			$player->sendForm(new self($player,"§c個数は整数で入力してください"));
 			return;
 		}
+		if($data[2]<=0){
+			$player->sendForm(new self($player,"§c個数は+で入力してください"));
+			return;
+		}
+		if($this->list[$data[1]]->getId()===218){
+			if($data[2]>1){
+				$player->sendForm(new self($player,"§cシュルカーボックスは1個までしか出品できません"));
+				return;
+			}
+		}
 		if(!is_numeric($data[3])){
 			$player->sendForm(new self($player,"§c値段は整数で入力してください"));
+			return;
+		}
+		if($data[3]<=0){
+			$player->sendForm(new self($player,"§c値段は+で入力してください"));
 			return;
 		}
 
@@ -150,6 +164,8 @@ class SellRegisterForm implements Form {
 			'content'=>$content
 		];
 	}
+
+
 }
 
 class ConfirmMyMarketForm implements Form{
@@ -302,4 +318,6 @@ class EditMyMarketForm implements Form {
 			];
 		}
 	}
+
+
 }

@@ -17,7 +17,7 @@ use pocketmine\Server;
 class pvpCommand extends VanillaCommand {
 
 	public function __construct(string $name) {
-		parent::__construct($name, "pvpエリアに移動します！", "/pvp [1/2]");
+		parent::__construct($name, "pvpエリアに移動します！", "/pvp [1/2/3/4]");
 	}
 
 	/**
@@ -135,11 +135,39 @@ class pvpCommand extends VanillaCommand {
 						$sender->sendMessage("[宇宙船]§aPVPエリアに移動しました！");
 						$sender->addEffect(new EffectInstance(Effect::getEffect(11), 20 * 3, 3, true));
 					}
+				}else if ($args[0] == "4") {
+					if ($sender instanceof Player) {
+						$rand = mt_rand(1, 6);
+						switch ($rand) {
+							case 1:
+								$pos = new Position(1677, 11, 1790, $sun);
+								break;
+							case 2:
+								$pos = new Position(1705, 11, 1818, $sun);
+								break;
+							case 3:
+								$pos = new Position(1677, 11, 1846, $sun);
+								break;
+							case 4:
+								$pos = new Position(1649, 11, 1818, $sun);
+								break;
+							case 5:
+								$pos = new Position(1683, 11, 1811, $sun);
+								break;
+							case 6:
+								$pos = new Position(1670, 11, 1825, $sun);
+								break;
+						}
+						$sender->teleport($pos);
+						$sender->getLevel()->broadcastLevelSoundEvent($pos, LevelSoundEventPacket::SOUND_TELEPORT);
+						$sender->sendMessage("[宇宙船]§aPVPエリアに移動しました！");
+						$sender->addEffect(new EffectInstance(Effect::getEffect(11), 20 * 3, 3, true));
+					}
 				} else {
 					$sender->sendMessage("[管理AI]§a存在しないエリアです。");
 				}
 			} else {
-				$sender->sendMessage("[管理AI]§aエリアを指定してください(1～2)");
+				$sender->sendMessage("[管理AI]§aエリアを指定してください(1～4)");
 			}
 		} else {
 			$sender->sendMessage("[管理AI]§aエリアでは逃げられません!");

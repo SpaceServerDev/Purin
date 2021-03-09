@@ -80,8 +80,7 @@ class SecretaryForm implements Form {
 				Server::getInstance()->dispatchCommand($player,"syo");
 			break;
 			case 17:
-				//Server::getInstance()->dispatchCommand($player,"option");
-				$player->sendMessage("[管理AI]未実装の項目です。");
+				Server::getInstance()->dispatchCommand($player,"option");
 			break;
 		}
 	}
@@ -958,7 +957,7 @@ class xtpForm implements Form{
 			"title" => "§a秘書 コスモ",
 			"content" => [
 				["type" => "label",
-				"text" => "x,y,zを指定したテレポートをします。\n現在行ける距離\nX:".$minX."～".$maxX."\nZ:".$minZ."～".$maxZ,],
+				"text" => "x,y,zを指定したテレポートをします。\n現在の座標\n".$playerdata->getPlayer()->getFloorX().",".$playerdata->getPlayer()->getFloorY().",".$playerdata->getPlayer()->getFloorZ()."\n現在行ける距離\nX:".$minX."～".$maxX."\nZ:".$minZ."～".$maxZ,],
 				["type" => "input",
 				"text" => "X",],
 				["type" => "input",
