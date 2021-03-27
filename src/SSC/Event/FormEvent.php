@@ -763,7 +763,8 @@ class FormEvent implements Listener{
 								}
 								break;
 						}
-					case 29914:
+						break;
+					/*case 29914:
 						switch ($data) {
 							case 0:
 								if ($playerdata->getTicket("EVENT") < 2) {
@@ -901,7 +902,7 @@ class FormEvent implements Listener{
 								$this->normalform($player);
 								break;
 						}
-						break;
+						break;*/
 
 
 					case 01201:

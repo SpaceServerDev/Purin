@@ -125,9 +125,18 @@ class SellRegisterForm implements Form {
 			return;
 		}
 
-		$this->list[$data[1]]->setCount($amount);
-		$item=Item::nbtDeserialize(($this->list[$data[1]]->nbtSerialize()));
-		$player->getInventory()->removeItem($item);
+		if($this->list[$data[1]]->getId()===378){
+			for($i=0;$i<$amount;$i++){
+				$item=Item::get(378,0,1);
+				$player->getInventory()->removeItem($item);
+			}
+
+		}else{
+			$this->list[$data[1]]->setCount($amount);
+			$item=Item::nbtDeserialize(($this->list[$data[1]]->nbtSerialize()));
+			$player->getInventory()->removeItem($item);
+		}
+
 		$cls=new tradeConfig();
 		$cls->registerItem($price,$player,$data[4],$this->list[$data[1]]->nbtSerialize());
 		$player->sendMessage("[§aTRADE§r] §a出品が完了しました！ ID:".$cls->getLastId());
