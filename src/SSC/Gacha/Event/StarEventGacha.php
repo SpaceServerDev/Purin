@@ -6,6 +6,8 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use SSC\Gacha\Gacha;
+use SSC\Item\JimSniperV2;
+use SSC\Item\RepairCream;
 
 class StarEventGacha implements Gacha {
 
@@ -95,7 +97,7 @@ class StarEventGacha implements Gacha {
 					return[$item,3,"§4天王星の縦の環のシャベル"];
 			}
 		}else{
-			switch (mt_rand(1,3)) {
+			switch (mt_rand(1,4)) {
 				case 1:
 					$item = Item::get(444, 0, 1);
 					$item->setCustomName("§a聖天使の翼");
@@ -103,10 +105,7 @@ class StarEventGacha implements Gacha {
 					$item->addEnchantment(new EnchantmentInstance($enchantment, 3));
 					return[$item,4,"§d聖天使の翼"];
 				case 2:
-					$item = Item::get(261, 0, 1);
-					$item->setCustomName("§bジムのスナイパーライフルv2");
-					$enchantment = Enchantment::getEnchantment(17);
-					$item->addEnchantment(new EnchantmentInstance($enchantment, 10));
+					$item = JimSniperV2::get();
 					return[$item,4,"§bジムのスナイパーライフルv2"];
 				/*case 3:
 					$item = Item::get(261, 0, 1);
@@ -118,10 +117,9 @@ class StarEventGacha implements Gacha {
 					$item = Item::get(397, 3, 1);
 					$item->setCustomName("§aエフェクト防具頭：暗視");
 					return[$item,4,"§aエフェクト防具頭：暗視"];
-				/*case 4:
-					$item = Item::get(378, 0, 1);
-					$item->setCustomName("§d修復クリーム");
-					return [$item,4,"§a§l修§b復§cク§dリ§eー§5ム§r"];*/
+				case 4:
+					$item = RepairCream::get();
+					return [$item,4,"§a§l修§b復§cク§dリ§eー§5ム§r"];
 
 			}
 		}

@@ -24,7 +24,7 @@ class RNormalGacha implements Gacha {
 				$item = Item::get(322, 1, 15);
 				return [$item,2,"エンチャント金りんご"];
 			case 5:
-				$item = Item::get(388, 0, 18);
+				$item = Item::get(388, 0, 10);
 				return [$item,2,"エメラルド"];
 			case 6:
 				$item = Item::get(396, 0, 12);

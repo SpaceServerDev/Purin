@@ -86,7 +86,7 @@ class ShopCommandReturn implements Listener {
 						$pk->formId = $id;
 						$data = [
 							"type" => "form",
-							"title" => "§d§lITEMSHOP.com/list/index.htm",
+							"title" => "§d§lITEMSHOP/list/index.htm",
 							"content" => "§a所持金 → §e{$mymoney}￥\n項目を選んでください\n\n",
 							"buttons" => $buttons
 						];
@@ -118,14 +118,14 @@ class ShopCommandReturn implements Listener {
 							$pk->formId = $id;
 							$formdata = [
 								"type" => "form",
-								"title" => "§d§lITEMSHOP.com",
+								"title" => "§d§lITEMSHOP",
 								"content" => "売りたいアイテムを選択してください\n§a現在の所持金 → §e{$mymoney}￥\n\n",
 								"buttons" => $buttons
 							];
 							$pk->formData = json_encode($formdata);
 							$player->dataPacket($pk);
 						} else {
-							$player->sendMessage("[ITEMSHOP.com]§cインベントリにアイテムがありません。");
+							$player->sendMessage("[ITEMSHOP]§cインベントリにアイテムがありません。");
 						}
 						break;
 				}
@@ -172,7 +172,7 @@ class ShopCommandReturn implements Listener {
 						$n++;
 					}
 				} else {
-					$player->sendMessage("[ITEMSHOP.com]§aまだ未対応の商品です。もう少しお待ち下さい");
+					$player->sendMessage("[ITEMSHOP]§aまだ未対応の商品です。もう少しお待ち下さい");
 					return false;
 				}
 
@@ -219,7 +219,7 @@ class ShopCommandReturn implements Listener {
 				$pk->formId = $id;
 				$data = [
 					"type" => "form",
-					"title" => "§d§lITEMSHOP.com/sell.htm",
+					"title" => "§d§lITEMSHOP/sell.htm",
 					"content" => "§a所持金 → §e{$mymoney}￥\n\n§c最終確認\n§a§l§a  {$this->Main->itemname[$name]["NAME"]} §c- §b{$this->Main->itiji[$name]["AMOUNT"]}個 \n§e  {$this->Main->itiji[$name]["PRICE"]}￥§cで売却してよろしいですか？\n\n",
 					"buttons" => $buttons
 				];
@@ -232,12 +232,12 @@ class ShopCommandReturn implements Listener {
 					$this->Main->economyAPI->addMoney($player->getName(), $this->Main->itiji[$name]["PRICE"]);
 					$item = Item::get($this->Main->itemname[$name]["ID"], $this->Main->itemname[$name]["DAMAGE"], $this->Main->itiji[$name]["AMOUNT"]);
 					$player->getInventory()->removeItem($item);
-					$player->sendMessage("[ITEMSHOP.com] §l§b" . $this->Main->itemname[$name]["NAME"] . " §aを §e" . $this->Main->itiji[$name]["PRICE"] . "￥ §aで §d" . $this->Main->itiji[$name]["AMOUNT"] . "個 §a売却しました");
+					$player->sendMessage("[ITEMSHOP] §l§b" . $this->Main->itemname[$name]["NAME"] . " §aを §e" . $this->Main->itiji[$name]["PRICE"] . "￥ §aで §d" . $this->Main->itiji[$name]["AMOUNT"] . "個 §a売却しました");
 					$this->Main->itemitiji[$name] = null;
 					$this->Main->itemname[$name] = null;
 					return false;
 				} else {
-					$player->sendMessage("[ITEMSHOP.com] §a売却を取消しました。");
+					$player->sendMessage("[ITEMSHOP] §a売却を取消しました。");
 					$this->Main->itiji[$name] = null;
 					$this->Main->itemname[$name] = null;
 					return false;
@@ -704,7 +704,7 @@ class ShopCommandReturn implements Listener {
 							'text' => "赤紫のテラコッタ §e(￥6/個)",
 						]; //159,159:2
 						$buttons[] = [
-							'text' => "水色のテラコッタ §e(￥6/個)",
+							'text' => "空色のテラコッタ §e(￥6/個)",
 						]; //160,159:3
 						$buttons[] = [
 							'text' => "黄色のテラコッタ §e(￥6/個)",
@@ -722,7 +722,7 @@ class ShopCommandReturn implements Listener {
 							'text' => "薄灰色のテラコッタ §e(￥6/個)",
 						]; //165,159:8
 						$buttons[] = [
-							'text' => "空色のテラコッタ §e(￥6/個)",
+							'text' => "水色のテラコッタ §e(￥6/個)",
 						]; //166,159:9
 						$buttons[] = [
 							'text' => "紫のテラコッタ §e(￥6/個)",
@@ -1101,7 +1101,7 @@ class ShopCommandReturn implements Listener {
 				$pk->formId = $id;
 				$data = [
 					"type" => "form",
-					"title" => "§d§lITEMSHOP.com",
+					"title" => "§d§lITEMSHOP",
 					"content" => "§a{$cas}欄です。欲しいアイテムを選択してください\n§a現在の所持金 → §e{$mymoney}￥",
 					"buttons" => $buttons
 				];
@@ -1285,7 +1285,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -1322,8 +1322,8 @@ class ShopCommandReturn implements Listener {
 								$this->Main->itemprice[$name] = 10;
 								break;
 							case 4:
-								$this->Main->itemid[$name] = 3;
-								$this->Main->itemdamage[$name] = 2;
+								$this->Main->itemid[$name] = 243;
+								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "ポドソル";
 								$this->Main->itemprice[$name] = 20;
 								break;
@@ -1381,7 +1381,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -1634,13 +1634,13 @@ class ShopCommandReturn implements Listener {
 								$this->Main->itemprice[$name] = 30;
 								break;
 							case 40:
-								$this->Main->itemid[$name] = 196;
+								$this->Main->itemid[$name] = 430;
 								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "アカシアのドア";
 								$this->Main->itemprice[$name] = 30;
 								break;
 							case 41:
-								$this->Main->itemid[$name] = 197;
+								$this->Main->itemid[$name] = 431;
 								$this->Main->itemdamage[$name] = 0;
 								$this->Main->itemname[$name] = "ダークオークのドア";
 								$this->Main->itemprice[$name] = 30;
@@ -1693,7 +1693,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -1843,7 +1843,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -1999,7 +1999,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2185,7 +2185,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2317,7 +2317,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2386,7 +2386,7 @@ class ShopCommandReturn implements Listener {
 							case 9:
 								$this->Main->itemid[$name] = 159;
 								$this->Main->itemdamage[$name] = 9;
-								$this->Main->itemname[$name] = "薄灰色のテラコッタ";
+								$this->Main->itemname[$name] = "水色のテラコッタ";
 								$this->Main->itemprice[$name] = 6;
 								break;
 							case 10:
@@ -2473,7 +2473,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2629,7 +2629,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2785,7 +2785,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -2941,7 +2941,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -3133,7 +3133,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -3142,7 +3142,7 @@ class ShopCommandReturn implements Listener {
 								return false;
 								break;
 							default:
-								$player->sendMessage("[ITEMSHOP.com]§c現在対応できていません。アップデートをお待ち下さい");
+								$player->sendMessage("[ITEMSHOP]§c現在対応できていません。アップデートをお待ち下さい");
 								return false;
 								break;
 						}
@@ -3215,7 +3215,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -3449,7 +3449,7 @@ class ShopCommandReturn implements Listener {
 								$pk->formId = $id;
 								$data = [
 									"type" => "form",
-									"title" => "§d§lITEMSHOP.com/list/index.htm",
+									"title" => "§d§lITEMSHOP/list/index.htm",
 									"content" => "§a所持金 → §e{$mymoney}￥\n\n",
 									"buttons" => $buttons
 								];
@@ -3466,7 +3466,7 @@ class ShopCommandReturn implements Listener {
 				$five = (string)$this->Main->itemprice[$name] * 5;
 				$stack = (string)$this->Main->itemprice[$name] * 64;
 				$formdata["type"] = "custom_form";
-				$formdata["title"] = "§d§lITEMSHOP.com/item/{$this->Main->itemid[$name]}/{$this->Main->itemdamage[$name]}";
+				$formdata["title"] = "§d§lITEMSHOP/item/{$this->Main->itemid[$name]}/{$this->Main->itemdamage[$name]}";
 				$formdata["content"][] = array(
 					"type" => "label",
 					"text" => "§a所持金 → §e{$mymoney}￥",
@@ -3512,7 +3512,7 @@ class ShopCommandReturn implements Listener {
 				$pk->formId = $id;
 				$data = [
 					"type" => "form",
-					"title" => "§d§lITEMSHOP.com/buy.htm",
+					"title" => "§d§lITEMSHOP/buy.htm",
 					"content" => "§a所持金 → §e{$mymoney}￥\n\n§c最終確認\n§a§l§a  {$this->Main->itemname[$name]} §c- §b{$this->Main->itemamount[$name]}個 \n§e  {$this->Main->itemprice[$name]}￥§cで購入してよろしいですか？\n\n",
 					"buttons" => $buttons
 				];
@@ -3524,7 +3524,7 @@ class ShopCommandReturn implements Listener {
 				if ($data == 0) {
 					if ($this->Main->itemamount[$name] < 2305) {
 						if ($mymoney <= $this->Main->itemprice[$name]) {
-							$player->sendMessage("[ITEMSHOP.com] §aお金が足りません。");
+							$player->sendMessage("[ITEMSHOP] §aお金が足りません。");
 							$this->Main->itemprice[$name] = null;
 							$this->Main->itemid[$name] = null;
 							$this->Main->itemname[$name] = null;
@@ -3536,7 +3536,7 @@ class ShopCommandReturn implements Listener {
 						$item = Item::get($this->Main->itemid[$name], $this->Main->itemdamage[$name], $this->Main->itemamount[$name]);
 						if ($player->getInventory()->canAddItem($item) == true) {
 							$player->getInventory()->addItem($item);
-							$player->sendMessage("[ITEMSHOP.com] §l§b" . $this->Main->itemname[$name] . " §aを §e" . $this->Main->itemprice[$name] . "￥ §aで §d" . $this->Main->itemamount[$name] . "個 §a買いました");
+							$player->sendMessage("[ITEMSHOP] §l§b" . $this->Main->itemname[$name] . " §aを §e" . $this->Main->itemprice[$name] . "￥ §aで §d" . $this->Main->itemamount[$name] . "個 §a買いました");
 							$playerdata = $this->Main->getPlayerData($name);
 							$playerdata->addVar("SHOPPING");
 							$this->Main->itemprice[$name] = null;
@@ -3546,7 +3546,7 @@ class ShopCommandReturn implements Listener {
 							$this->Main->itemamount[$name] = null;
 							return false;
 						} else {
-							$player->sendMessage("[ITEMSHOP.com] §aインベントリの空きが足りません。");
+							$player->sendMessage("[ITEMSHOP] §aインベントリの空きが足りません。");
 							$this->Main->itemprice[$name] = null;
 							$this->Main->itemid[$name] = null;
 							$this->Main->itemname[$name] = null;
@@ -3555,7 +3555,7 @@ class ShopCommandReturn implements Listener {
 							return false;
 						}
 					} else {
-						$player->sendMessage("[ITEMSHOP.com] §aインベントリに入り切りません");
+						$player->sendMessage("[ITEMSHOP] §aインベントリに入り切りません");
 						$this->Main->itemprice[$name] = null;
 						$this->Main->itemid[$name] = null;
 						$this->Main->itemname[$name] = null;
@@ -3564,7 +3564,7 @@ class ShopCommandReturn implements Listener {
 						return false;
 					}
 				} else {
-					$player->sendMessage("[ITEMSHOP.com] §a購入を取消しました。");
+					$player->sendMessage("[ITEMSHOP] §a購入を取消しました。");
 					$this->Main->itemprice[$name] = null;
 					$this->Main->itemid[$name] = null;
 					$this->Main->itemname[$name] = null;

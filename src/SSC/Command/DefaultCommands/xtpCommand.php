@@ -27,10 +27,26 @@ class xtpCommand extends VanillaCommand {
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
 		if ($sender instanceof Player) {
 			if (!isset($args[0])or!isset($args[1])or!isset($args[2])or!isset($args[3])) {
+				$sender->sendMessage("[転送システム] /xtp x座標 y座標 z座標 ワールド名(地球/人工惑星/太陽/海王星/火星)");
 				return false;
 			}
 			$playerdata=main::getPlayerData($sender->getName());
 			if (is_numeric($args[0])&& is_numeric($args[1]) && is_numeric($args[2])) {
+				if ($args[1] > 300) {
+					$args[1] = 300;
+				}
+				$maxX=$playerdata->getPlayer()->getFloorX()+$playerdata->getSpaceShipSize()*100;
+				$minX=$playerdata->getPlayer()->getFloorX()-$playerdata->getSpaceShipSize()*100;
+				if($args[0]>$maxX or $args[0]<$minX){
+					$playerdata->getPlayer()->sendMessage("[転送システム]xの値が不正です。 宇宙船のサイズが足りません。 [{$minX}~{$maxX}]");
+					return true;
+				}
+				$maxZ=$playerdata->getPlayer()->getFloorZ()+$playerdata->getSpaceShipSize()*100;
+				$minZ=$playerdata->getPlayer()->getFloorZ()-$playerdata->getSpaceShipSize()*100;
+				if($args[2]>$maxZ or $args[2]<$minZ){
+					$playerdata->getPlayer()->sendMessage("[転送システム]zの値が不正です。 宇宙船のサイズが足りません。 [{$minZ}~{$maxZ}] ");
+					return true;
+				}
 				if ($args[3] === "地球" or $args[3] === "人工惑星" or $args[3] === "太陽" or $args[3] === "海王星" or $args[3] === "火星") {
 					if ($args[3] === "人工惑星") {
 						$world = main::getMain()->getServer()->getLevelByName("flatworld");

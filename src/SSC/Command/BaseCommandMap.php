@@ -5,6 +5,18 @@ namespace SSC\Command;
 
 
 use Pocketmine\Server;
+use SSC\Command\DefaultCommands\eventitemCommand;
+use SSC\Command\DefaultCommands\expertmodeCommand;
+use SSC\Command\DefaultCommands\keityochatCommand;
+use SSC\Command\DefaultCommands\moonCommand;
+use SSC\Command\DefaultCommands\naviCommand;
+use SSC\Command\DefaultCommands\optionCommand;
+use SSC\Command\DefaultCommands\otosidamaCommand;
+use SSC\Command\DefaultCommands\plutoCommand;
+use SSC\Command\DefaultCommands\policechatCommand;
+use SSC\Command\DefaultCommands\spaceshipCommand;
+use SSC\Command\DefaultCommands\tokenCommand;
+use SSC\Command\DefaultCommands\tpcancelCommand;
 use SSC\Command\DefaultCommands\tradeCommand;
 use SSC\Command\DefaultCommands\advancemodeCommand;
 use SSC\Command\DefaultCommands\calcCommand;
@@ -56,6 +68,7 @@ use SSC\Command\DefaultCommands\tpagreeCommand;
 use SSC\Command\DefaultCommands\tpdisCommand;
 use SSC\Command\DefaultCommands\tppCommand;
 use SSC\Command\DefaultCommands\unregisterCommand;
+use SSC\Command\DefaultCommands\vipchatCommand;
 use SSC\Command\DefaultCommands\warpCommand;
 use SSC\Command\DefaultCommands\WorldWarpCommand;
 use SSC\Command\DefaultCommands\xtpCommand;
@@ -69,6 +82,7 @@ class BaseCommandMap {
 	const pm="pocketmine";
 
 	public static function init(main $main) {
+		if(version::DEV_VERSION) Server::getInstance()->getCommandMap()->register(self::pm, new testCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new xyzCommand("xyz"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new respawnCommand("respawn"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new spaceCommand("space"));
@@ -88,9 +102,10 @@ class BaseCommandMap {
 		Server::getInstance()->getCommandMap()->register(self::pm, new kCommand("k", "こんにちはの顔文字を送信します", "/k"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new kCommand("oti", "おちるときのの顔文字を送信します", "/oti"));
 		Server::getInstance()->getCommandMap()->register(self::pm, new kCommand("otu", "おつかれの顔文字を送信します", "/otu"));
-		Server::getInstance()->getCommandMap()->register(self::pm, new tppCommand($main));
-		Server::getInstance()->getCommandMap()->register(self::pm, new tpagreeCommand($main));
-		Server::getInstance()->getCommandMap()->register(self::pm, new tpdisCommand($main));
+		Server::getInstance()->getCommandMap()->register(self::pm, new tppCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm, new tpagreeCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm, new tpdisCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm, new tpcancelCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new suCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new dustCommand($main));
 		Server::getInstance()->getCommandMap()->register(self::pm, new hidCommand());
@@ -135,12 +150,23 @@ class BaseCommandMap {
 		Server::getInstance()->getCommandMap()->register(self::pm, new xtpCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new spCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm, new saddleCommand());
-		Server::getInstance()->getCommandMap()->register(self::pm,new loginbonusCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm, new loginbonusCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new keikokuCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new gachaticketCommand());
 		Server::getInstance()->getCommandMap()->register(self::pm ,new tradeCommand());
-		if(version::DEV_VERSION) {
-			Server::getInstance()->getCommandMap()->register(self::pm, new testCommand());
-		}
+		Server::getInstance()->getCommandMap()->register(self::pm ,new eventitemCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm ,new expertmodeCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new spaceshipCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new naviCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new moonCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new plutoCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new policechatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new keityochatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new vipchatCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new tokenCommand());
+		Server::getInstance()->getCommandMap()->register(self::pm,new optionCommand());
+		//Server::getInstance()->getCommandMap()->register(self::pm,new otosidamaCommand());
+
+
 	}
 }

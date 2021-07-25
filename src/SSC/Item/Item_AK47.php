@@ -10,9 +10,9 @@ use SSC\Gun\GunManager;
 
 class Item_AK47 implements SpaceServerItem {
 
-	public static function get(int $amount = 1) {
+	public static function get(int $amount = 1):Item {
 		$item = Item::get(467, 0, 1);
-		$item->setCustomName("§bAK47");
+		$item->setCustomName("§bアサルトライフル");
 		$item->getNamedTag()->setString("gun", "AK47");
 		$serial=GunManager::getSerial();
 		$item->getNamedTag()->setString("serial", $serial);

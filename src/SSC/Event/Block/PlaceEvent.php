@@ -8,6 +8,7 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
 use SSC\Async\LogSaveAsyncTask;
+use SSC\Form\SecretaryForm\SecretaryForm;
 use SSC\main;
 use SSC\PlayerEvent;
 
@@ -40,6 +41,12 @@ class PlaceEvent implements Listener {
 				return true;
 			}
 		}
+
+		 if($event->getItem()->getNamedTag()->offsetExists("navi")){
+		 	$event->getPlayer()->sendForm(new SecretaryForm());
+		 	$event->setCancelled();
+		 	return true;
+		 }
 
 		 if ($playerdata->getLog()) {
 			 $world = $event->getBlock()->getLevel()->getName();

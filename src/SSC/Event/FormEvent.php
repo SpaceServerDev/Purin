@@ -286,6 +286,7 @@ class FormEvent implements Listener{
 						$aitename = $this->Main->itiji[$name]["name"][$result[0]];
 						$aite = $this->Main->getServer()->getPlayer($aitename);
 						$aitedata = $this->Main->getPlayerData($aitename);
+						if($aitedata->isExpertLevel()) $aitename="§d".$aitename;
 						$aitedata->setDisplayName($aitename);
 						$aite->sendMessage("§6[管理AI]称号がリセットされました");
 						$player->sendMessage("§6[管理AI]{$aite->getName()}の称号をリセットしました");
@@ -327,6 +328,7 @@ class FormEvent implements Listener{
 
 						} else if ($data == 1) {
 							if (!$player->isOp()) {
+								if($playerdata->isExpertLevel()) $name="§d".$name;
 								$playerdata->setDisplayName($name);
 								$player->sendMessage("§6[管理AI]称号がリセットされました");
 								return false;
@@ -405,9 +407,11 @@ class FormEvent implements Listener{
 							$aite = $this->Main->getServer()->getPlayer($aitename);
 							$aitedata = $this->Main->getPlayerData($aitename);
 							if ($aite instanceof Player) {
-								$aitedata->setDisplayName("§f{$result[1]}§r{$aitename}§f");
+								$display= $result[1]  . $aite->getName();
+								if($aitedata->isExpertLevel()) $display= $result[1] . " §d" . $aite->getName()."§r";
+								$aitedata->setDisplayName($display);
 								$aite->sendMessage("§6[管理AI]称号が{$result[1]}§f{$aite->getName()}§6に変更されました");
-								$player->sendMessage("§6[管理AI]{$aite->getName()}の称号を{$result[1]}§f{$aite->getName()}§6に変更しました");
+								$player->sendMessage("§6[管理AI]{$aite->getName()}の称号を{$display}§6に変更しました");
 							} else {
 								$player->sendMessage("そのようなプレイヤーは存在しません");
 							}
@@ -416,8 +420,10 @@ class FormEvent implements Listener{
 							if ($nagasa <= 15) {
 								if ($mymoney > 1000) {
 									$this->Main->economyAPI->reduceMoney($name, 1000);
-									$playerdata->setDisplayName("[" . $result[1] . "§r]" . $player->getName());
-									$player->sendMessage("§6[管理AI]{$player->getName()}の称号を§f[{$result[1]}§f]{$player->getName()}§6に変更しました");
+									$display="[" . $result[1] . "§r]" . $player->getName();
+									if($playerdata->isExpertLevel()) $display="[" . $result[1] . "§r] §d" . $player->getName()."§r";
+									$playerdata->setDisplayName($display);
+									$player->sendMessage("§6[管理AI]{$player->getName()}の称号を§f{$display}§6に変更しました");
 								} else {
 									$player->sendMessage("[管理AI]§4お金が足りていません");
 								}
@@ -757,7 +763,8 @@ class FormEvent implements Listener{
 								}
 								break;
 						}
-					case 29914:
+						break;
+					/*case 29914:
 						switch ($data) {
 							case 0:
 								if ($playerdata->getTicket("EVENT") < 2) {
@@ -895,7 +902,7 @@ class FormEvent implements Listener{
 								$this->normalform($player);
 								break;
 						}
-						break;
+						break;*/
 
 
 					case 01201:

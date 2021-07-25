@@ -27,8 +27,8 @@ class QuitEvent implements Listener {
 		$webhook->setCustomName("QUIT");
 		Sender::sendAsync($webhook);
 
-		$pe=main::getPlayerData($player->getName());
-		if($pe->getShitDownNow()){
+		$pe = main::getPlayerData($player->getName());
+		if ($pe->getShitDownNow()) {
 			ShitDownEvent::StandUp($player);
 		}
 
@@ -36,9 +36,11 @@ class QuitEvent implements Listener {
 			main::getMain()->getScheduler()->cancelTask(main::getMain()->id[$name]);
 			unset(main::getMain()->id[$name]);
 		}
-		main::getMain()->playerlist->reload();
-		main::getMain()->playerlist->set($player->getName(), (string)$player->getUniqueId()->toString());
-		main::getMain()->playerlist->save();
+		if (main::getMain()->playerlist->exists($name)) {
+			main::getMain()->playerlist->reload();
+			main::getMain()->playerlist->set($player->getName(), (string)$player->getUniqueId()->toString());
+			main::getMain()->playerlist->save();
+		}
 		$money = EconomyAPI::getInstance()->myMoney($name);
 		$playerdata = main::getPlayerData($name);
 		$playerdata->save($money);
@@ -54,14 +56,25 @@ class QuitEvent implements Listener {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§aopによる強制退出§eで§7§lオフライン§r§eになりました");
 		} else if ($re === "timeout") {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§aネットワークの不安定により§a§7§lオフライン§r§eになりました");
-		} else if ($re === "サーバーのホームページを読んできてください！\nルールのページにパスワードが書いてあります！\nhttp://yurisi.space/") {
+		} else if ($re === "サーバーのホームページにディスコードへ\n参加できるリンクがあります！\nhttp://yurisi.space/\nわからないことがあればツイッターの@Dev_yrsまで！") {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§a新規ルール未読により§a§7§lオフライン§r§eになりました");
 		} else {
 			$event->setQuitMessage("§7[退室] §c" . $name . "§e様が§a" . $re . "§eで§7§lオフライン§r§eになりました");
 		}
 
-		if($playerdata->getPerm()!="OP" and $playerdata->getPerm()!="オーナー"){
+		if ($playerdata->getPerm() != "OP" and $playerdata->getPerm() != "オーナー") {
 			main::getMain()->registerRanking($playerdata);
+		}
+
+		if ($player->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
+			$gunmanager = main::getMain()->getGunManager();
+			$gun = $player->getInventory()->getItemInHand()->getNamedTag()->getString("gun");
+			$serial = $player->getInventory()->getItemInHand()->getNamedTag()->getString("serial");
+			$gundata = $gunmanager->getGunData($gun, $serial);
+			if ($gundata->isShootNow()) {
+				main::getMain()->getScheduler()->cancelTask($gundata->getTaskId());
+				$gundata->endShoot();
+			}
 		}
 	}
 }

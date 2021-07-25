@@ -11,14 +11,14 @@ use SSC\Form\Trade\MainForm;
 class SellForm implements Form {
 
 	public function handleResponse(Player $player, $data): void {
-		if(!is_numeric($data)) return;
+		if (!is_numeric($data)) return;
 		switch ($data) {
 			case 0:
 				$player->sendForm(new SellRegisterForm($player));
 				return;
 			case 1:
 				$cls = new tradeConfig();
-				if ($cls->getMarketPlayer($player->getName()) == null) {
+				if ($cls->getMarketPlayer($player->getName()) === null) {
 					$player->sendMessage("[§aTRADE§r] 出品していません");
 					return;
 				}
@@ -80,7 +80,7 @@ class SellRegisterForm implements Form {
 	}
 
 	public function handleResponse(Player $player, $data): void {
-		if($data==false) return;
+		if(!$data) return;
 		if(!$this->list[$data[1]] instanceof Item){
 			$player->sendForm(new self($player,"§c不明なエラーです。やり直してください。"));
 			return;
@@ -89,8 +89,22 @@ class SellRegisterForm implements Form {
 			$player->sendForm(new self($player,"§c個数は整数で入力してください"));
 			return;
 		}
+		if($data[2]<=0){
+			$player->sendForm(new self($player,"§c個数は+で入力してください"));
+			return;
+		}
+		if($this->list[$data[1]]->getId()===218){
+			if($data[2]>1){
+				$player->sendForm(new self($player,"§cシュルカーボックスは1個までしか出品できません"));
+				return;
+			}
+		}
 		if(!is_numeric($data[3])){
 			$player->sendForm(new self($player,"§c値段は整数で入力してください"));
+			return;
+		}
+		if($data[3]<=0){
+			$player->sendForm(new self($player,"§c値段は+で入力してください"));
 			return;
 		}
 
@@ -111,8 +125,18 @@ class SellRegisterForm implements Form {
 			return;
 		}
 
-		$item=Item::nbtDeserialize(($this->list[$data[1]]->nbtSerialize()));
-		$player->getInventory()->removeItem($item);
+		if($this->list[$data[1]]->getId()===378){
+			for($i=0;$i<$amount;$i++){
+				$item=Item::get(378,0,1);
+				$player->getInventory()->removeItem($item);
+			}
+
+		}else{
+			$this->list[$data[1]]->setCount($amount);
+			$item=Item::nbtDeserialize(($this->list[$data[1]]->nbtSerialize()));
+			$player->getInventory()->removeItem($item);
+		}
+
 		$cls=new tradeConfig();
 		$cls->registerItem($price,$player,$data[4],$this->list[$data[1]]->nbtSerialize());
 		$player->sendMessage("[§aTRADE§r] §a出品が完了しました！ ID:".$cls->getLastId());
@@ -149,6 +173,8 @@ class SellRegisterForm implements Form {
 			'content'=>$content
 		];
 	}
+
+
 }
 
 class ConfirmMyMarketForm implements Form{
@@ -170,6 +196,7 @@ class ConfirmMyMarketForm implements Form{
 
 
 	public function jsonSerialize() {
+		$button=array();
 		foreach ($this->data as $data){
 			$item = tradeConfig::getItem($data["id"]);
 			if($item instanceof Item) {
@@ -205,7 +232,7 @@ class SelectMyMarketForm implements Form{
 		$cls = new tradeConfig();
 		switch ($data) {
 			case 0:
-				$item = tradeConfig::getItem($data["id"]);
+				$item = tradeConfig::getItem($this->data["id"]);
 				if($item instanceof Item) {
 					if ($player->getInventory()->canAddItem($item)) {
 						$cls->removeItem($this->data["id"]);
@@ -300,4 +327,6 @@ class EditMyMarketForm implements Form {
 			];
 		}
 	}
+
+
 }

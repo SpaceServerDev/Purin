@@ -4,6 +4,9 @@ namespace SSC\Event\player;
 
 use pocketmine\entity\Human;
 use pocketmine\entity\Tamable;
+use pocketmine\inventory\BaseInventory;
+use pocketmine\item\Fireworks;
+use pocketmine\item\ItemIds;
 use pocketmine\level\Explosion;
 use pocketmine\level\Level;
 use pocketmine\level\particle\AngryVillagerParticle;
@@ -59,7 +62,11 @@ use pocketmine\event\Listener;
 use SSC\Form\FishForm;
 use SSC\Gun\Bombing\BombingEvent;
 use SSC\Gun\Bombing\BombingTask;
+use SSC\Level\Particle\HeartCircleParticle;
+use SSC\Level\Particle\ShootBowCircleParticle;
+use SSC\Level\Particle\SlashEffectParticle;
 use SSC\main;
+use SSC\Task\EventGenerater;
 use xenialdan\apibossbar\BossBar;
 
 class KillDeathEvent implements Listener {
@@ -82,9 +89,10 @@ class KillDeathEvent implements Listener {
 	private $kpn;
 
 	/*
- * キルしたプレイヤーのディスプレイネーム
- */
+	 * キルしたプレイヤーのディスプレイネーム
+	 */
 	private $kp;
+
 	/*
  	* キルしたプレイヤーのディスプレイネーム
  	*/
@@ -126,7 +134,19 @@ class KillDeathEvent implements Listener {
 		}
 
 		if ($event->getCause() === 6) {
-			if ($entity->getLevel()->getFolderName() != "pvp") {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon") {
+				$event->setCancelled();
+			}
+		}
+
+		if ($event->getCause() === 9) {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon" ) {
+				$event->setCancelled();
+			}
+		}
+
+		if ($event->getCause() === 10) {
+			if ($entity->getLevel()->getFolderName() != "pvp" and $entity->getLevel()->getFolderName() != "moon") {
 				$event->setCancelled();
 			}
 		}
@@ -148,7 +168,7 @@ class KillDeathEvent implements Listener {
 					if(!$damager->isOp()){
 						if($entity->namedtag->offsetExists("pet")){
 							if($entity->namedtag->getString("pet")!=$damager->getName()){
-								if($entity->getLevel()->getFolderName()!=="pvp") {
+								if($entity->getLevel()->getFolderName()!=="pvp" and $entity->getLevel()->getFolderName()!=="moon") {
 									$event->setCancelled();
 									$damager->sendMessage("[{$entity->namedtag->getString("pet")}のぺっと]やめてくだひゃい>< いたいめぅ");
 									return true;
@@ -174,11 +194,24 @@ class KillDeathEvent implements Listener {
 
 			if ($event->getEntity() instanceof Player && $event->getDamager() instanceof Player) {
 				$map = $event->getEntity()->getLevel()->getFolderName();
-				if ($map != "pvp") {
+				if ($map != "pvp" and $map != "moon") {
 					$event->setCancelled();
 					$this->otikp[$event->getEntity()->getName()] = null;
 					return true;
 				}
+
+				if($map==="moon") {
+					$entdata = main::getPlayerData($event->getEntity()->getName());
+					$dmgdata = main::getPlayerData($event->getDamager()->getName());
+					if ($entdata->getClan() === $dmgdata->getClan()) {
+						if($entdata->getClan()!="") {
+							$event->setCancelled();
+							return true;
+						}
+					}
+				}
+
+				/** @var  $hand Item*/
 				$hand = $event->getDamager()->getInventory()->getItemInHand();
 				$tag = $hand->getNamedTag();
 				$name = $hand->getCustomName();
@@ -190,7 +223,7 @@ class KillDeathEvent implements Listener {
 					$y = $event->getEntity()->y;
 					$z = $event->getEntity()->z;
 					$pk->position = new Vector3($x, $y, $z);
-					$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk);
+					$this->Main->getServer()->broadcastPacket($event->getEntity()->getLevel()->getPlayers(), $pk);
 					$pk2 = new PlaySoundPacket;
 					$pk2->soundName = "random.explode";
 					$pk2->x = $event->getEntity()->x;
@@ -198,25 +231,26 @@ class KillDeathEvent implements Listener {
 					$pk2->z = $event->getEntity()->z;
 					$pk2->volume = 0.5;
 					$pk2->pitch = 1;
-					$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk2);
+					$this->Main->getServer()->broadcastPacket($event->getEntity()->getLevel()->getPlayers(), $pk2);
 					$event->getEntity()->attack(new EntityDamageEvent($event->getEntity(), EntityDamageEvent::CAUSE_ENTITY_ATTACK, 2));
 				}
 				if ($tag->offsetExists("Saisana")) {
 					switch (mt_rand(1, 9)) {
 						case 1:
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->saisana($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->saisana($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
 							break;
 						case 2:
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->saisana2($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->saisana2($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $entity, $entity->getLevel())), 1.5);
 							break;
 						case 3:
 						case 4:
 							$damager->addEffect(new EffectInstance(Effect::getEffect(2), 60, 1, true));
 							$damager->addEffect(new EffectInstance(Effect::getEffect(15), 60, 10, true));
 							break;
-
 					}
-
+				}
+				if($tag->offsetExists("DevilSword")){
+					SlashEffectParticle::add($event->getEntity()->x,$event->getEntity()->y,$event->getEntity()->z,$event->getEntity()->getLevel(),$damager->getDirection());
 				}
 			}
 		}
@@ -228,13 +262,16 @@ class KillDeathEvent implements Listener {
 		$player = $event->getPlayer();
 		$name = $player->getName();
 		$event->setKeepInventory(true);
+		if($event->getPlayer()->getLevel()->getName()==="moon"){
+			$event->setKeepInventory(false);
+		}
+
 		if ($player->getGamemode() == 0) {
 			$player->setAllowFlight(false);
 		}
 		if ($event->getEntity() instanceof Player and $event->getPlayer() instanceof Player) {
 			switch ($this->kc) {
 				case 1:
-
 					$item = $this->ki;
 					$killer = $this->kp;
 					$kil = $this->kpn;
@@ -251,8 +288,8 @@ class KillDeathEvent implements Listener {
 							$playerdata = $this->Main->getPlayerData($kil);
 							$ki = $this->Main->getServer()->getPlayer($kil);
 							$this->Main->rate($ki, $player);
-							if ($playerdata->getKillst() % 10==0) {
-								if(Server::getInstance()->getPlayer($kil)->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
+							if ($playerdata->getKillst() % 10 == 0) {
+								if (Server::getInstance()->getPlayer($kil)->getInventory()->getItemInHand()->getNamedTag()->offsetExists("gun")) {
 									$cls = new BombingEvent();
 									main::getMain()->getScheduler()->scheduleDelayedTask(new BombingTask(Server::getInstance()->getPlayer($kil), $cls), 20);
 									Server::getInstance()->broadcastTip($kil . "が砲撃支援を要請した！");
@@ -260,7 +297,7 @@ class KillDeathEvent implements Listener {
 							}
 						}
 						foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-							if ($player->getLevel()->getFolderName() === "pvp" or $player->getName() == $name) {
+							if ($player->getLevel()->getFolderName() === "pvp" or $player->getLevel()->getFolderName() === "moon" or $player->getName() == $name) {
 								switch (mt_rand(1, 4)) {
 									case 1:
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- で殺害しました §e({$playerdata->getKillst()}キルストリーク)");
@@ -275,10 +312,8 @@ class KillDeathEvent implements Listener {
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- でばらばらにしました §e({$playerdata->getKillst()}キルストリーク)");
 										break;
 								}
-
 							}
 						}
-
 					}
 					return false;
 				case 2:
@@ -309,7 +344,7 @@ class KillDeathEvent implements Listener {
 							}
 						}
 						foreach (Server::getInstance()->getOnlinePlayers() as $player) {
-							if ($player->getLevel()->getFolderName() === "pvp" or $player->getName() == $name) {
+							if ($player->getLevel()->getFolderName() === "pvp" or $player->getLevel()->getFolderName() === "moon" or $player->getName() == $name) {
 								switch (mt_rand(1, 4)) {
 									case 1:
 										$player->sendMessage("§a§l[戦闘型AI] §c{$killer}§a が §b{$playername}§a を -§d{$item}§a- で射抜きました §e({$playerdata->getKillst()}キルストリーク)");
@@ -512,27 +547,25 @@ class KillDeathEvent implements Listener {
 				case 15:
 					return true;
 					break;
-
-
 			}
-
 			return false;
 		}
+		return true;
 	}
 
 	public function onShoot(EntityShootBowEvent $event) {
 		if($event->getEntity() instanceof Player) {
-			$pworld = $event->getEntity()->getLevel();
-			$world = $this->Main->getServer()->getLevelByName("pvp");
-			if ($pworld != $world) {
+			$pworld = $event->getEntity()->getLevel()->getFolderName();
+			$world = $this->Main->getServer()->getLevelByName("pvp")->getFolderName();
+			$world2 = $this->Main->getServer()->getLevelByName("moon")->getFolderName();
+			if ($pworld !== $world and $pworld !== $world2) {
 				$event->setCancelled();
-				$event->getEntity()->sendMessage("[管理AI]§4PVPエリアで撃てるようになります");
 			} else {
 				$tag = $event->getBow()->getNamedTag();
 				if ($tag->offsetExists("Yurisi_Love")) {
 					if ($event->getEntity() instanceof Player) {
 						if ($event->getForce() == 3) {
-							main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->yurisiBeam($event->getEntity())), 1);
+							main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater($this->yurisiBeam($event->getEntity())), 1);
 						} else {
 							$pk = new TextPacket();
 							$pk->type = 4;
@@ -562,7 +595,6 @@ class KillDeathEvent implements Listener {
 					$entity = Entity::createEntity("Egg", $event->getEntity()->getLevel(), $nbt, $event->getEntity(), $baseForce >= 1);
 					$entity->setMotion($entity->getMotion()->multiply(0.6));
 					$event->setProjectile($entity);
-
 					/*}elseif($event->getEntity()->getInventory()->getItemInHand()->getCustomName() == "§aTANBOの第三の目"){
 						$nbt = Entity::createBaseNBT(
 							$event->getEntity()->add(0, $event->getEntity()->getEyeHeight(), 0),
@@ -579,6 +611,13 @@ class KillDeathEvent implements Listener {
 				} elseif ($event->getEntity()->getInventory()->getItemInHand()->getCustomName() == "§d♡キューピットの弓♡") {
 					$this->heart[$event->getEntity()->getName()] = 1;
 				}
+				if ($event->getEntity() instanceof Player) {
+					if ($event->getForce() == 3) {
+						if ($tag->offsetExists("DevilBow")) {
+							ShootBowCircleParticle::add($event->getEntity()->x, $event->getEntity()->y, $event->getEntity()->z, $event->getEntity()->getLevel(), $event->getEntity()->getDirection());
+						}
+					}
+				}
 			}
 		}
 	}
@@ -589,7 +628,6 @@ class KillDeathEvent implements Listener {
 		if ($attacker instanceof Player && $damager instanceof Player) {
 			$entity = $event->getEntity();
 			if ($entity instanceof Egg) {
-
 				if (!empty($this->hanabi[$attacker->getName()])) {
 					if ($this->hanabi[$attacker->getName()] === 1) {
 						if ($attacker->getInventory()->getItemInHand()->getCustomName() == "§bジムのスナイパーライフルv2") {
@@ -600,7 +638,7 @@ class KillDeathEvent implements Listener {
 							$pk2->z = $event->getEntity()->z;
 							$pk2->volume = 0.5;
 							$pk2->pitch = 1;
-							$this->Main->getServer()->broadcastPacket($this->Main->getServer()->getLevelByName("pvp")->getPlayers(), $pk2);
+							$this->Main->getServer()->broadcastPacket($attacker->getLevel()->getPlayers(), $pk2);
 							$event->getEntityHit()->attack(new EntityDamageEvent($damager, EntityDamageEvent::CAUSE_ENTITY_ATTACK, 5));
 							$this->hanabi[$attacker->getName()] = 0;
 						} else {
@@ -609,10 +647,7 @@ class KillDeathEvent implements Listener {
 					}
 				}
 			}
-
-
 			if ($entity instanceof Arrow) {
-
 				$hand = $event->getEntity()->getOwningEntity()->getInventory()->getItemInHand();
 				$tag = $hand->getNamedTag();
 				$this->hitSound($attacker);
@@ -674,7 +709,6 @@ class KillDeathEvent implements Listener {
 		}
 		$explosion = new Explosion(new Position($x,$y2,$z,$level), 1);
 		$explosion->explodeB();
-
 	}
 
 	public function saisana2($x, $y, $z, $damager, Level $level): \Generator {
@@ -690,13 +724,11 @@ class KillDeathEvent implements Listener {
 			$explosion = new Explosion(new Position($x, $y2, $z, $level), 1);
 			$explosion->explodeB();
 		}
-
 	}
 
 	public function yurisiBeam(Player $entity) {
 		$particle = new HeartParticle(new Vector3($entity->x, $entity->y + 1, $entity->z));
 		$particle->setComponents($entity->x, $entity->y + 1, $entity->z);
-
 		$increase = $entity->getDirectionVector()->normalize();
 		for ($i = 0; $i < 30; $i++) {
 			yield;
@@ -709,21 +741,10 @@ class KillDeathEvent implements Listener {
 					$event = new EntityDamageByEntityEvent($entity, $player, EntityDamageEvent::CAUSE_PROJECTILE, 3, [], 0.5);
 					$player->attack($event);
 					$this->hitSound($entity);
-					main::getMain()->getScheduler()->scheduleRepeatingTask(new Saisana1($this->Heart($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
+					main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater(HeartCircleParticle::addMoveParticle($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
 					break 2;
 				}
 			}
-		}
-	}
-
-	public function Heart($x,$y,$z,$level){
-		for ($i = 0; $i < 360; $i+=10) {
-			yield;
-			$pos = new Vector3($x + sin(deg2rad($i))**3 * 2 * 1, $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z );
-			$level->addParticle(new HeartParticle($pos));
-			$pos = new Vector3($x , $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z + sin(deg2rad($i))**3 * 2 * 1);
-			$level->addParticle(new HeartParticle($pos));
-			//$y += 0.1;
 		}
 	}
 
@@ -739,23 +760,4 @@ class KillDeathEvent implements Listener {
 	}
 }
 
-class Saisana1 extends Task {
-	/**
-	 * Actions to execute when run
-	 *
-	 * @return void
-	 */
-		public function __construct(\Generator $generator) {
-			$this->generator = $generator;
-		}
-
-		public function onRun(int $currentTick) {
-			if ($this->generator->valid()) {//yieldされていたら
-            $this->generator->next();//進む
-        } else {//yieldされなくなったら(一番下に行った=forを抜けたら)
-            $this->getHandler()->cancel();//タスクをキャンセル(終了)する
-        }
-
-		}
-}
 

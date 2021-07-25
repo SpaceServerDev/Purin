@@ -5,7 +5,6 @@ namespace SSC;
 
 use pocketmine\Player;
 
-use pocketmine\scheduler\Task;
 use pocketmine\utils\Config;
 
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
@@ -14,8 +13,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\math\Vector3;
 use SSC\Data\FishConfig;
 use SSC\Data\PlayerConfigManager;
-use SSC\Event\Cheat\XRay;
-use SSC\Gun\PlayerGunStatus;
+use SSC\Data\VirtualStorageConfig;
 use xenialdan\apibossbar\BossBar;
 
 class PlayerEvent {
@@ -99,7 +97,6 @@ class PlayerEvent {
 	 */
 	private $fish;
 
-
 	/**
 	 * @var int
 	 */
@@ -120,6 +117,17 @@ class PlayerEvent {
 	 */
 	private $wait=false;
 
+	private $sentTpp="";
+
+	private $sendTpp="";
+
+	/**
+	 * @var VirtualStorageConfig
+	 */
+	private $vs;
+
+	private $level_display=true;
+
 	/**
 	 * PlayerEvent constructor.
 	 * @param main $main
@@ -129,6 +137,7 @@ class PlayerEvent {
 		$this->player = $player;
 		$this->main = $main;
 		$this->config = new Config($this->main->getDataFolder() . "Player" . "/".$player->getName().".yml", Config::YAML);
+		//$this->vs=new VirtualStorageConfig($player->getName());
 	}
 
 	/**
@@ -184,6 +193,32 @@ class PlayerEvent {
 	 */
 	public function getBossbar(): BossBar {
 		return $this->bar;
+	}
+
+	/*public function getVirtualStorage(){
+		return $this->vs;
+	}*/
+
+	public function getSpaceShipSize():int{
+		return $this->data["SPACESHIP_SIZE"];
+	}
+
+	public function addSpaceShipSize(){
+		$this->data["SPACESHIP_SIZE"]++;
+	}
+
+	public function setSpaceShipSize(int $size){
+		$this->data["SPACESHIP_SIZE"]=$size;
+	}
+
+	public function getSpaceShipLevel():int{
+		return $this->data["SPACESHIP_LEVEL"];
+	}
+
+
+
+	public function setSpaceShipLevel(int $level){
+		$this->data["SPACESHIP_LEVEL"]=$level;
 	}
 
 	/**
@@ -459,7 +494,7 @@ class PlayerEvent {
 			}
 		}
 		if ($this->data["LEVELMODE"] === 1) {
-			if ($this->getLevel() == 1000) {
+			if ($this->getLevel() === 1000) {
 				$leve = "§l☆MAX☆§r";
 			}
 		}
@@ -486,7 +521,7 @@ class PlayerEvent {
 			} else if ($this->data["LEVELMODE"] === 1) {
 				$this->player->setDisplayName("<§cLV." . $leve . "§f>" . $display);
 			}else if($this->data["LEVELMODE"]===2){
-				$this->player->setDisplayName("§e<§aL§bV§c.§e§l" . $leve . "§r§e>" . $display);
+				$this->player->setDisplayName("§e♛☆*.[§aL§bV§c.§e§l" . $leve . "§r§e].*☆♛ §r" . $display."§r");
 			}
 			return;
 		}
@@ -495,7 +530,7 @@ class PlayerEvent {
 		} else if ($this->data["LEVELMODE"] === 1) {
 			$this->player->setDisplayName("<§cLV." . $leve . "§f>“" . $pm . "”" . $display);
 		}else if($this->data["LEVELMODE"]===2){
-				$this->player->setDisplayName("§e<§aL§bV§c.§e§l" . $leve . "§r§e>“" . $pm . "”" . $display);
+				$this->player->setDisplayName("§e♛☆*.[§aL§bV§c.§e§l" . $leve . "§r§e].*☆♛ §r“" . $pm . "”" . $display."§r");
 		}
 
 	}
@@ -643,6 +678,10 @@ class PlayerEvent {
 	 */
 	public function getFishing():int{
 		return $this->data["FISH"];
+	}
+
+	public function getInventoryObject(){
+		return $this->data["INVENTORY_OBJECT"];
 	}
 
 	/**
@@ -910,6 +949,57 @@ class PlayerEvent {
 		return $this->data["REPEATBONUS"];
 	}
 
+	public function getSpaceShipEffect():int{
+		return $this->data["SPACESHIP_EFFECT"];
+	}
+
+	public function setSpaceShipEffect(int $id){
+		$this->data["SPACESHIP_EFFECT"]=$id;
+	}
+
+	public function getJumpEffect():int{
+		return $this->data["JUMP_EFFECT"];
+	}
+
+	public function setJumpEffect(int $id){
+		$this->data["SPACESHIP_EFFECT"]=$id;
+	}
+
+	public function getSpaceShipOreCount(string $ore):int{
+		return $this->data["SPACESHIP_".$ore];
+	}
+
+	public function addSpaceShipOreCount(string $ore,int $count=1){
+		$this->data["SPACESHIP_".$ore]+=$count;
+	}
+
+	public function getSentTppRequest():String{
+		return $this->sentTpp;
+	}
+
+	public function setSentTppRequest(String $name){
+		$this->sentTpp=$name;
+	}
+
+	public function resetSentTppRequest(){
+		$this->sentTpp='';
+	}
+
+	public function getSendTppRequest():String{
+		return $this->sendTpp;
+	}
+
+	public function setSendTppRequest(String $name){
+		$this->sendTpp=$name;
+	}
+
+	public function resetSendTppRequest(){
+		$this->sendTpp='';
+	}
+
+
+
+
 	/**
 	 * @param int $number
 	 * @return int
@@ -918,6 +1008,9 @@ class PlayerEvent {
 		if($this->main->isKakinDay($this->getPlayer())){
 			$number=$number*2;
 		}
+
+		if(idate("j")%5===0) $number=$number*2;
+
 		if($this->isNormalLevel()){
 			$lt=floor($this->data["LEVEL"]*1.1);
 			$leveltable=30*$lt;
@@ -931,9 +1024,7 @@ class PlayerEvent {
 						$this->data["OLDTABLEEXP"] = $this->data["OLDTABLEEXP"] + $this->data["MAXTABLEEXP"];
 						$this->data["MAXTABLEEXP"] = 0;
 						++$this->data["LEVEL"];
-						if ($n == 1) {
-							$re = 4;
-						}
+						$re = 4;
 						if ($this->data["LEVEL"] == 500) {
 							$re = 3;
 						}
@@ -947,10 +1038,12 @@ class PlayerEvent {
 				}
 			}
 			return $re;
-		}else if($this->isAdvanceLevel()){
+		}
+
+		if($this->isAdvanceLevel()) {
 			$lt = floor($this->data["LEVEL"] * 1.3);
 			$leveltable = 120 * $lt;
-			$re=0;
+			$re = 0;
 			for ($n = 1; $n <= $number; $n++) {
 				$nmbr = 1;
 				$this->data["MAXTABLEEXP"] = $this->data["MAXTABLEEXP"] + $nmbr;
@@ -960,35 +1053,7 @@ class PlayerEvent {
 						$this->data["OLDTABLEEXP"] = $this->data["OLDTABLEEXP"] + $this->data["MAXTABLEEXP"];
 						$this->data["MAXTABLEEXP"] = 0;
 						++$this->data["LEVEL"];
-						if ($n == 1) {
-							$re = 4;
-						}
-						if ($this->data["LEVEL"] % 100 == 0) {
-							$re = 2;
-						}
-						if ($this->data["LEVEL"] % 10 == 0) {
-							$re = 1;
-						}
-					}
-				}
-			}
-			return $re;
-		}else if($this->isExpertLevel()){
-			$lt = floor($this->data["LEVEL"] * 1.5);
-			$leveltable = 250 * $lt;
-			$re=0;
-			for ($n = 1; $n <= $number; $n++) {
-				$nmbr = 1;
-				$this->data["MAXTABLEEXP"] = $this->data["MAXTABLEEXP"] + $nmbr;
-				$this->data["EXP"] = $this->data["EXP"] + $nmbr;
-				if ($this->data["LEVEL"] < 500) {
-					if ($this->data["MAXTABLEEXP"] >= $leveltable) {
-						$this->data["OLDTABLEEXP"] = $this->data["OLDTABLEEXP"] + $this->data["MAXTABLEEXP"];
-						$this->data["MAXTABLEEXP"] = 0;
-						++$this->data["LEVEL"];
-						if ($n == 1) {
-							$re = 4;
-						}
+						$re = 4;
 						if ($this->data["LEVEL"] % 100 == 0) {
 							$re = 2;
 						}
@@ -1000,6 +1065,33 @@ class PlayerEvent {
 			}
 			return $re;
 		}
+
+		if($this->isExpertLevel()){
+			$lt = floor($this->data["LEVEL"] * 1.5);
+			$leveltable = 250 * $lt;
+			$re=0;
+			for ($n = 1; $n <= $number; $n++) {
+				$nmbr = 1;
+				$this->data["MAXTABLEEXP"] = $this->data["MAXTABLEEXP"] + $nmbr;
+				$this->data["EXP"] = $this->data["EXP"] + $nmbr;
+				if ($this->data["LEVEL"] < 1000) {
+					if ($this->data["MAXTABLEEXP"] >= $leveltable) {
+						$this->data["OLDTABLEEXP"] = $this->data["OLDTABLEEXP"] + $this->data["MAXTABLEEXP"];
+						$this->data["MAXTABLEEXP"] = 0;
+						++$this->data["LEVEL"];
+						$re = 4;
+						if ($this->data["LEVEL"] % 100 == 0) {
+							$re = 2;
+						}
+						if ($this->data["LEVEL"] % 10 == 0) {
+							$re = 1;
+						}
+					}
+				}
+			}
+			return $re;
+		}
+
 		return 0;
 	}
 
@@ -1008,6 +1100,13 @@ class PlayerEvent {
 		$this->load=true;
 	}
 
+	public function getLevelDisplay(){
+		return $this->level_display;
+	}
+
+	public function changeLevelDisplay(bool $bool){
+		$this->level_display=$bool;
+	}
 	/**
 	 * @param int $money
 	 */

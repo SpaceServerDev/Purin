@@ -83,7 +83,10 @@ class RankForm implements Form{
 				$player->sendForm(new FishRankForm($this->pe));
 			return;
 			case 16:
-				$player->sendForm(new AllRankForm($this->pe,"money","所持金ランキング","￥"));
+				$player->sendForm(new AllRankForm($this->pe,"money","所持金","￥"));
+			return;
+			case 17:
+				$player->sendForm(new AllRankForm($this->pe,"spaceshipsize","宇宙船",""));
 			return;
 		}
 	}
@@ -112,8 +115,9 @@ class RankForm implements Form{
 			['text' => "キルした回数",],
 			['text' => "キルストリーク回数",],
 			['text' => "釣りをした回数",],
-			['text' => "魚の大きさランキング",],
-			['text' => "所持金ランキング",],
+			['text' => "魚の大きさ",],
+			['text' => "所持金",],
+			['text' => "宇宙船サイズ",],
 		];
 		return [
 			'type'=>'form',

@@ -52,13 +52,21 @@ class TouchEvent implements Listener {
 				return true;
 			}
 		}
-		if ($player->getLevel()->getFolderName() != "pvp") {
+		if ($player->getLevel()->getFolderName() != "pvp" and $player->getLevel()->getFolderName()!="moon") {
 			if ($item->getId() == 261) {
 				if ($event->getBlock()->getId() !== 199) {
 					$event->setCancelled();
+					$event->getPlayer()->sendMessage("[管理AI]§4PVPエリア,月で撃てるようになります");
 				}
 			}
 		}
+
+		 if($event->getItem()->getNamedTag()->offsetExists("navi")){
+		 	$event->getPlayer()->sendForm(new SecretaryForm());
+		 	$event->setCancelled();
+		 	return true;
+		 }
+
 		/**
 		 * @var $pe PlayerEvent
 		 */
@@ -82,6 +90,9 @@ class TouchEvent implements Listener {
 		if ($item->getId() === 339) {
 			$tag = $item->getNamedTag();
 			if ($tag->offsetExists("EventGacha")) {
+				if($event->getBlock()->getId()===199){
+					return true;
+				}
 				if (!$pe->getWait()) {
 					if ($player->getInventory()->canAddItem(Item::get(1, 1, 1))) {
 						$class = new GachaEvent($pe);

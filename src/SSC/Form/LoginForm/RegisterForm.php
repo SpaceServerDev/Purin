@@ -27,7 +27,7 @@ class RegisterForm implements Form {
 				$player->sendForm(new CheckPasswordForm());
 			return;
 			case 1:
-				$player->kick("サーバーのホームページを読んできてください！\nルールのページにパスワードが書いてあります！\nhttp://yurisi.space/",false);
+				$player->kick("サーバーのホームページにディスコードへ\n参加できるリンクがあります！\nhttp://yurisi.space/\nわからないことがあればツイッターの@Dev_yrsまで！",false);
 			return;
 		}
 
@@ -50,7 +50,7 @@ class RegisterForm implements Form {
 		return [
 			"type" => "form",
 			"title" => "§a§lSPACESERVER LOGINSYSTEM",
-			"content" => "§aようこそ宇宙サーバーへ！\n§aこのサーバーのルール\nhttps://yurisi.space/rule.html\nはお読みになられましたでしょうか。\n\n",
+			"content" => "§aようこそ宇宙サーバーへ！\n当サーバーではなりすまし防止の為discord参加必須になっています！\n参加できないよって方はTwitterの@Dev_yrsやLobiのゆりしー。に\nダイレクトメッセージを送っていただければワンタイムパスワードを取得できます！\n§aこのサーバーのdiscordに参加し、\nワンタイムパスワードを取得しましたか？\n\n",
 			"buttons" => $buttons
 		];
 	}

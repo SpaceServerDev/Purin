@@ -4,6 +4,7 @@
 namespace SSC\Gacha\Event;
 
 
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use SSC\PlayerEvent;
 
 class EventGacha{
@@ -26,7 +27,10 @@ class EventGacha{
 	public function turn(){
 		$rnd=mt_rand(1,100);
 		switch ($rnd){
-			case $rnd<=3://シクレ
+			case $rnd==1://アルティメット
+				$class=new DevilEventGacha();
+			break;
+			case $rnd>1&&$rnd<=3://シクレ
 				switch (mt_rand(1,3)) {
 					case 1:
 						$class=new LegendEventGacha("SEQ");
@@ -40,7 +44,7 @@ class EventGacha{
 				}
 			break;
 			case $rnd>3&&$rnd<=13://UR
-				switch (mt_rand(1,5)){
+				switch (mt_rand(1,6)){
 					case 1:
 						$class=new OPEventGacha("UR");
 					break;
@@ -56,6 +60,9 @@ class EventGacha{
 					case 5:
 						$class=new ComradeGacha("UR");
 					break;
+					case 6:
+						$class=new GunGacha();
+					break;
 				}
 			break;
 			case $rnd>13&&$rnd<=40://R
@@ -67,7 +74,21 @@ class EventGacha{
 		}
 		list($item,$rare,$itemname)=$class->turn();
 		$this->pe->getPlayer()->getInventory()->addItem($item);
-		if($rare===4) {
+		if($rare===5){
+			$this->pe->addGachaCount();
+			$this->pe->getPlayer()->sendTitle("§4！！！アルティメット！！！");
+			$pk = new PlaySoundPacket;
+			$pk->soundName = "entity.cat.ambient";
+			$pk->x = $this->pe->getPlayer()->x;
+			$pk->y = $this->pe->getPlayer()->y;
+			$pk->z = $this->pe->getPlayer()->z;
+			$pk->volume = 0.3;
+			$pk->pitch = 1;
+			$this->pe->getPlayer()->sendDataPacket($pk);
+			$this->pe->getPlayer()->getServer()->broadcastPopup(self::GACHA."§a".$this->pe->getName()."§fが§4アルティメットレア §e- ".$itemname." §e- §fを当選しました。(".$this->pe->getGachaCount()."回目)");
+			$this->pe->getPlayer()->sendMessage(self::GACHA."§4アルティメットレア §e- ".$itemname." §e- §fを当選しました。(".$this->pe->getGachaCount()."回目)");
+			$this->pe->resetGachaCount();
+		}elseif($rare===4) {
 			$this->pe->addGachaCount();
 			$this->pe->getPlayer()->getServer()->broadcastPopup(self::GACHA."§a".$this->pe->getName()."§fが§dシークレットレア §e- ".$itemname." §e- §fを当選しました。(".$this->pe->getGachaCount()."回目)");
 			$this->pe->getPlayer()->sendMessage(self::GACHA."§dシークレットレア §e- ".$itemname." §e- §fを当選しました。(".$this->pe->getGachaCount()."回目)");

@@ -40,6 +40,8 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
+use pocketmine\network\mcpe\protocol\FilterTextPacket;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\ClosureTask;
@@ -50,8 +52,13 @@ use SSC\Gun\Bombing\BombingEvent;
 use SSC\Gun\Bombing\BombingTask;
 use SSC\Item\Item_AK47;
 use SSC\Item\Item_AWM;
+use SSC\Item\Item_RPG7;
 use SSC\Item\Item_UZI;
+use SSC\Item\JimSniperV2;
+use SSC\Item\RepairCream;
+use SSC\Level\Particle\HeartCircleParticle;
 use SSC\main;
+use SSC\Task\EventGenerater;
 
 class testCommand extends VanillaCommand {
 
@@ -74,10 +81,10 @@ class testCommand extends VanillaCommand {
 			$z = $sender->z;
 			$level = $sender->getPlayer()->getLevel();
 
-			var_dump($sender->getInventory()->getItemInHand()->getNamedTag());
 			$cls = new BombingEvent();
 			main::getMain()->getScheduler()->scheduleDelayedTask(new BombingTask($sender, $cls), 20);
-			Server::getInstance()->broadcastTip($sender->getName() . "が砲撃支援を要請した！");
+
+			var_dump($sender->getInventory()->getItemInHand()->getNamedTag());
 
 			$item=Item_AK47::get();
 			$sender->getInventory()->addItem($item);
@@ -88,45 +95,34 @@ class testCommand extends VanillaCommand {
 			$item=Item_AWM::get();
 			$sender->getInventory()->addItem($item);
 
-
+			$item=Item_RPG7::get();
 			$sender->getInventory()->addItem($item);
-			//main::getMain()->getScheduler()->scheduleRepeatingTask(new TestTask($this->Bombing($x, $y, $z, $sender, $level)), 2);
+
+			$item=RepairCream::get(10);
+			$sender->getInventory()->addItem($item);
+
+			$item=RepairCream::get(10);
+			$item->getNamedTag()->setInt("Fish",1);
+			$sender->getInventory()->addItem($item);
+
+			$item=JimSniperV2::get();
+			$sender->getInventory()->addItem($item);
+
+			//main::getMain()->addEXP($sender, 500000);
+			$pk=new OnScreenTextureAnimationPacket();
+			$pk->effectId=27;
+			$sender->sendDataPacket($pk);
+
+
 		}
+
+
+		$player=$sender;
+		//main::getMain()->getScheduler()->scheduleRepeatingTask(new EventGenerater(HeartCircleParticle::addMoveParticle($player->x, $player->y + 1, $player->z, $player->getLevel())), 1);
 
 		return true;
 	}
 
-	public function test($x,$y,$z,$sender,Level $level): \Generator {
-		$sender->sendMessage("おめでとう！ yurisi と Cookietattchan と VillagerMeyason が 結婚しました！");
-		for ($i = 0; $i < 360; $i+=10) {
-			yield;
-			$pos = new Vector3($x + sin(deg2rad($i))**3 * 2 * 1, $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z );
-			$level->addParticle(new HeartParticle($pos));
-			$pos = new Vector3($x , $y+2+  (1 * cos(deg2rad($i)) - cos(deg2rad($i))**4)*2, $z + sin(deg2rad($i))**3 * 2 * 1);
-			$level->addParticle(new HeartParticle($pos));
-			//$y += 0.1;
-
-		}
-	}
-}
-class TestTask extends Task {
-	/**
-	 * Actions to execute when run
-	 *
-	 * @return void
-	 */
-		public function __construct(\Generator $generator) {
-			$this->generator = $generator;
-		}
-
-		public function onRun(int $currentTick) {
-			if ($this->generator->valid()) {//yieldされていたら
-            $this->generator->next();//進む
-        } else {//yieldされなくなったら(一番下に行った=forを抜けたら)
-            $this->getHandler()->cancel();//タスクをキャンセル(終了)する
-        }
-			//main::getMain()->getScheduler()->scheduleRepeatingTask(new particletask(), 1200);
-		}
 }
 
 

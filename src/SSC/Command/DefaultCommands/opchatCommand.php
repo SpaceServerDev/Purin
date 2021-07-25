@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SSC\Command\DefaultCommands;
-
 
 use pocketmine\command\CommandSender;
 use pocketmine\command\defaults\VanillaCommand;
@@ -23,20 +21,12 @@ class opchatCommand extends VanillaCommand {
 	 * @throws CommandException
 	 */
 	public function execute(CommandSender $sender, string $commandLabel, array $args) {
-		if($sender->isOp()) {
-			if (!isset($args[0])) {
-				return false;
-			}
-			if ($sender instanceof Player) {
-				$sendname = $sender->getName();
-				$chat = $args[0];
-				foreach (Server::getInstance()->getOnlinePlayers() as $payer) {
-					if ($payer->isOp() == true) {
-						$payer->sendMessage("<§a{$sendname}§r>→<§eop全員§r> {$chat}");
-					}
-				}
-			}
-		}
+		if (!$sender instanceof Player) return false;
+		if (!$sender->isOp()) return false;
+		if (!isset($args[0])) return false;
+		$name = $sender->getName();
+		$chat = implode(" ", $args);
+		foreach (Server::getInstance()->getOnlinePlayers() as $player) if ($player->isOp()) $player->sendMessage("<§a{$name}§r>→<§eop全員§r> {$chat}");
 		return true;
 	}
 }

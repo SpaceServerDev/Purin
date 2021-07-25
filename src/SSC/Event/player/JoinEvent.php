@@ -8,6 +8,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
+use pocketmine\network\mcpe\protocol\OnScreenTextureAnimationPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Server;
 use SSC\Data\FishConfig;
@@ -94,13 +95,13 @@ class JoinEvent implements Listener {
 		/*
 		   * 入室メッセージの管理
 		   */
-		if (!main::getMain()->password->exists($name)) {
+		if (!main::getMain()->playerlist->exists($name)) {
 			$event->setJoinMessage("§a[入室] §a§l 初in §r§bの§c" . $name . "§b様が§a§lオンライン§r§bになりました");
 		} else {
 			if ($name === "yurisi") {
 				$event->setJoinMessage("§a[入室] §bオーナーの§c" . $name . "§bが§a§lオンライン§r§bになりました");
-			} else if ($name === "jimsan114") {
-				$event->setJoinMessage("§a[入室] §aサブオーナーの§c" . $name . "§a様が§a§lオンライン§r§bになりました");
+			} else if ($name === "Jimsan313468") {
+				$event->setJoinMessage("§a[入室] §a働き者スタッフの§c" . $name . "§a様が§a§lオンライン§r§bになりました");
 			} else if ($name === "yomogicute") {
 				$event->setJoinMessage("§a[入室] §bいけめんの§c" . $name . "§b様が§a§lオンライン§r§bになりました");
 			} else if ($name === "Ka3y9") {
@@ -111,8 +112,10 @@ class JoinEvent implements Listener {
 				$event->setJoinMessage("§a[入室] §dかわいいスタッフの§c" . $name . "§d様が§a§lオンライン§r§bになりました");
 			} else if ($name === "AkToU07") {
 				$event->setJoinMessage("§a[入室] §dけんちくスタッフの§c" . $name . "§d様が§a§lオンライン§r§bになりました");
-			} else if ($name === "Tanbo1223") {
-				$event->setJoinMessage("§a[入室] §dふしぎなスタッフの§c" . $name . "§d様が§a§lオンライン§r§bになりました");
+			} else if ($name === "spinymouse13008") {
+				$event->setJoinMessage("§d[入室] けんちくしの§c" . $name . "§d様が§a§lオンライン§r§bになりました");
+			}else if ($name === "creepe2002") {
+				$event->setJoinMessage("§d[入室] §bおでぶスタッフの§c" . $name . "§d様が§a§lオンライン§r§bになりました");
 			} else if ($name === "tamnia") {
 				$event->setJoinMessage("§a[入室] §b天才ら民のたむにあ§eが§a§lオンライン§r§eになりました");
 			} else if ($name === "ryuu219") {
@@ -129,6 +132,16 @@ class JoinEvent implements Listener {
 				$event->setJoinMessage("§a[入室] §bにゃんはろー§d§lチェシャ猫§r§bがきーたよ(๑>ㅅ<๑)ฅ");
 			} else if ($name === "VillagerMeyason") {
 				$event->setJoinMessage("§a[入室] §5じゃがいも§e大王 §d§lめやそん §r§5がいらっしゃった！");
+			} else if ($name === "rainbowkirby107") {
+				$event->setJoinMessage("§a[入室] §a〜§dはるかぜと§bともに§a〜§cに§9じ§eぽ§aよ§fくんが来たよ！");
+			} else if ($name === "Rai3Den4") {
+				$event->setJoinMessage("§a[入室] §e§lまきわりチョップ！！！！！§r§e相撲部の§e雷電真太郎§eが入室しました");
+			} else if ($name === "Kuro83060") {
+				$event->setJoinMessage("§a[入室] §0真っ黒§8カゲ色の§7人が入室しました");
+			} else if ($name === "gorira98000") {
+				$event->setJoinMessage("§a[入室] §0〜§bアイストロンの達人§0〜§b ごりらが入室したよ！！！");
+			} else if ($name === "heart Law666"){
+				$event->setJoinMessage("§a[入室] §4脈動する§c音が聞こえる§6heart Law666が入室しました");
 			} else {
 				$event->setJoinMessage("§a[入室] §c" . $name . "§e様が§a§lオンライン§r§eになりました");
 			}
@@ -138,7 +151,7 @@ class JoinEvent implements Listener {
 			}
 		}
 		$task = new SendTask(main::getMain(), $player);
-		main::getMain()->getScheduler()->scheduleRepeatingTask($task, 10);
+		main::getMain()->getScheduler()->scheduleRepeatingTask($task, 5);
 		main::getMain()->id[$player->getName()] = $task->getTaskId();
 
 		$pk = new PlaySoundPacket;
@@ -157,30 +170,21 @@ class JoinEvent implements Listener {
 		$pk->volume = 0.5;
 		$pk->pitch = 1;
 		$player->sendDataPacket($pk);
+		$pk=new OnScreenTextureAnimationPacket();
+		$pk->effectId=27;
+		$player->sendDataPacket($pk);
 
 		main::getMain()->playerlist->reload();
 		$name = $player->getName();
 		$ip = $player->getAddress();
-		if (!main::getMain()->password->exists($name)) {
+		if (!main::getMain()->playerlist->exists($name)) {
 			$player->setImmobile(true);
 			$player->sendForm(new RegisterForm());
 		} else {
-			if (!main::getMain()->playerlist->exists($name)) {
-				//$player->sendForm(new ReloginForm());
-				//main::getMain()->login[$name] = 1;
-				//$player->setImmobile(true);
-				//return true;
-			} else {
-				if ($playerdata->getIP() == $ip && main::getMain()->playerlist->get($name)==(string)$player->getUniqueId()->toString()) {
-					Server::getInstance()->dispatchCommand($player, "info");
-				} else {
-					//$player->sendForm(new ReloginForm());
-					//main::getMain()->login[$name] = 1;
-					//$player->setImmobile(true);
-				}
+			Server::getInstance()->dispatchCommand($player, "info");
 
-			}
 		}
+
 		if($playerdata->getPerm()!="OP" and $playerdata->getPerm()!="オーナー"){
 			main::getMain()->registerRanking($playerdata);
 		}

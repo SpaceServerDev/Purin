@@ -35,6 +35,7 @@ class Nuker implements Listener {
 							main::getMain()::getPlayerData($event->getPlayer()->getName())->addNukeCount();
 							if (main::getMain()::getPlayerData($event->getPlayer()->getName())->getNukeCount() > 8) {
 								$cid = main::getMain()->playerlist->get($event->getPlayer()->getName());
+								$event->getPlayer()->kick("nukeの使用でBANされました。\n自動ですので誤作動でしたら恐れ入りますがdiscordかlobiにて解除申請を\n行ってください。");
 								main::getMain()->addCBan($cid, "Nukeの使用");
 								$event->getPlayer()->setBanned(true);
 								Server::getInstance()->broadcastMessage("[管理AI] §4HackCamが" . $event->getPlayer()->getName() . "をNukeの使用で接続禁止処理しました");
@@ -64,6 +65,7 @@ class Nuker implements Listener {
 								main::getMain()::getPlayerData($event->getPlayer()->getName())->addNukeCount();
 								if(main::getMain()::getPlayerData($event->getPlayer()->getName())->getNukeCount() > 8) {
 									$cid = main::getMain()->playerlist->get($event->getPlayer()->getName());
+									$event->getPlayer()->kick("nukeの使用でBANされました。\n誤作動でしたら恐れ入りますがdiscordかlobiにて解除申請を\n行ってください。");
 									main::getMain()->addCBan($cid, "Nukeの使用");
 									$event->getPlayer()->setBanned(true);
 									Server::getInstance()->broadcastMessage("[管理AI] §4HackCamが" . $event->getPlayer()->getName() . "をNukeの使用で接続禁止処理しました");

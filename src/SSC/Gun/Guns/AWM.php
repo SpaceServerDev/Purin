@@ -51,7 +51,7 @@ class AWM implements Gun {
 	}
 
 	public function getReloadTick(): int {
-		return 80;
+		return 100;
 	}
 
 	public function isShootNow():bool{
@@ -76,7 +76,7 @@ class AWM implements Gun {
 	}
 
 	public function getCoolDownTick(): int {
-		return 40;
+		return 80;
 	}
 
 	public function getRecoil():float {

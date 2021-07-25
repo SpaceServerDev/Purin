@@ -4,6 +4,8 @@ namespace SSC;
 
 use pocketmine\entity\Entity;
 
+use pocketmine\level\Level;
+use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\Player;
@@ -13,7 +15,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
-
 use pocketmine\event\Listener;
 
 use pocketmine\level\Position;
@@ -21,7 +22,6 @@ use pocketmine\level\Position;
 use pocketmine\item\Item;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
-
 
 use pocketmine\math\Vector3;
 
@@ -35,6 +35,7 @@ use onebone\economyapi\EconomyAPI;
 
 use SSC\Command\BaseCommandMap;
 use SSC\Core\version;
+use SSC\Data\EXShop;
 use SSC\Data\FishSizeConfig;
 use SSC\Data\RankConfig;
 use SSC\Entity\PatimonEntity;
@@ -55,30 +56,22 @@ use SSC\Event\player\PreLoginEvent;
 use SSC\Event\player\QuitEvent;
 use SSC\Event\player\RespawnEvent;
 use SSC\Event\player\ToggleFlightEvent;
+use SSC\Event\player\ToggleSneakEvent;
 use SSC\Event\player\TouchEvent;
 use SSC\Event\Tile\SignChange;
 use bboyyu51\pmdiscord\Sender;
 use bboyyu51\pmdiscord\structure\Content;
 
-
 use SSC\Command\AllCommands;
 
 use SSC\Data\ItemData;
-use SSC\Gun\AR\AK47;
-use SSC\Gun\Gun;
 use SSC\Gun\GunEvent;
 use SSC\Gun\GunManager;
-use SSC\Item\SpaceServerItemFactory;
 use SSC\Task\RebootTask;
-
 
 use SSC\Event\FormEvent;
 
-
-
-
 class main extends PluginBase implements Listener {
-
 
 	/*
 	 * shop,sell,eshop
@@ -89,18 +82,13 @@ class main extends PluginBase implements Listener {
 	public $itemdamage;
 	public $itemamount;
 
-
 	public $seconds = 30;
 
 	public $itiji;
 
-
-
 	public $login;
 
-	public $reload=21600;
-
-
+	private $reload=21600;
 
 	/*
 	 * tpp
@@ -124,7 +112,7 @@ class main extends PluginBase implements Listener {
 	public $economyAPI;
 
 	/**
-	 * @var $log Config
+	 * @var $log \SQLite3
 	 */
 	public $log;
 
@@ -157,14 +145,17 @@ class main extends PluginBase implements Listener {
 	 * @var Config
 	 */
 	public $loginbonus;
+
 	/**
 	 * @var Config
 	 */
 	public $levelbonus;
+
 	/**
 	 * @var Config
 	 */
 	public $banlist;
+
 	/**
 	 * @var Config
 	 */
@@ -179,29 +170,44 @@ class main extends PluginBase implements Listener {
 	 * @var Entity
 	 */
 	public $patimon;
+
 	/**
 	 * @var Config
 	 */
 	private $npc;
+
 	/**
 	 * @var Config
 	 */
 	public $fishsize;
 
 	/**
-	 * @var RankConfig
-	 */
-	public $rank;
-	/**
 	 * @var GunManager
 	 */
 	private $GunManager;
+
+	/**
+	 * @var \SQLite3
+	 */
+	private $vs;
+
+	/**
+	 * @var Config
+	 */
+	public $otosidama;
+
+	private $floatingSetting=false;
+
+	private $token=[];
+
+	private static $exshop;
+
 
 
 	public function onEnable() {
 		$this->registerEvents();
 		BaseCommandMap::init($this);
-		$this::loadLevels();
+		$this->loadLevels();
 		$this::setTime();
 
 		self::$main = $this;
@@ -211,7 +217,9 @@ class main extends PluginBase implements Listener {
 
 		$this->setConfig();
 		$this->sendAA();
-		$this->getScheduler()->scheduleRepeatingTask(new RebootTask($this), 20);
+		$this->getScheduler()->scheduleRepeatingTask(new RebootTask(), 20);
+		//self::$exshop=new EXShop();
+		//self::$exshop->init();
 		$this->sendDiscord("OPEN","宇宙サーバーが開いたよ！");
 		Entity::registerEntity(PatimonEntity::class, true);
 		if(!$this->npc->exists("spawned")) {
@@ -221,19 +229,12 @@ class main extends PluginBase implements Listener {
 		}
 	}
 
-	private static function loadLevels(){
-	 	Server::getInstance()->loadLevel("world");
-		Server::getInstance()->loadLevel("earth");
-		Server::getInstance()->loadLevel("sun");
-		Server::getInstance()->loadLevel("pvp");
-		Server::getInstance()->loadLevel("space");
-		Server::getInstance()->loadLevel("flatworld");
-		Server::getInstance()->loadLevel("TauCetusE");
-		Server::getInstance()->loadLevel("TauCetusF");
-		Server::getInstance()->loadLevel("Neptune");
-		Server::getInstance()->loadLevel("Blackhole");
-		Server::getInstance()->loadLevel("trappist-1e");
-		Server::getInstance()->loadLevel("mars");
+	private function loadLevels(){
+		foreach ($this->getLevels() as $level) Server::getInstance()->loadLevel($level);
+	}
+
+	public function getLevels():array{
+		return ["world","earth","sun","pvp","space","flatworld","TauCetusE","TauCetusF","Neptune","Blackhole","trappist-1e","mars","moon","pluto"];
 	}
 
 	private static function setTime(){
@@ -272,8 +273,9 @@ class main extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents(new CommandPreProcessEvent(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new ToggleFlightEvent(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new Nuker(),$this);
-		$this->getServer()->getPluginManager()->registerEvents(new XRay(),$this);
+		//$this->getServer()->getPluginManager()->registerEvents(new XRay(),$this);
 		$this->getServer()->getPluginManager()->registerEvents(new GunEvent(),$this);
+		$this->getServer()->getPluginManager()->registerEvents(new ToggleSneakEvent(),$this);
 	}
 
 	private function sendAA(){
@@ -297,6 +299,7 @@ class main extends PluginBase implements Listener {
 		if (!(file_exists($this->getDataFolder() . "LevelBonus"))) @mkdir($this->getDataFolder() . "LevelBonus", 0755, true);
 		if (!(file_exists($this->getDataFolder() . "Fish"))) @mkdir($this->getDataFolder() . "Fish", 0755, true);
 		if (!(file_exists($this->getDataFolder() . "Rank"))) @mkdir($this->getDataFolder() . "Rank", 0755, true);
+		if (!(file_exists($this->getDataFolder() . "VS"))) @mkdir($this->getDataFolder() . "VS", 0755, true);
 		$this->playerlist = new Config($this->getDataFolder() . "player.yml", Config::YAML, array());
 		$this->banlist = new Config($this->getDataFolder() . "cban.yml", Config::YAML, array());
 		$this->blacklist = new Config($this->getDataFolder() . "ban.yml", Config::YAML);
@@ -309,12 +312,20 @@ class main extends PluginBase implements Listener {
 		$this->levelbonus = new Config($this->getDataFolder() . "LevelBonus" . "/levelbonus.yml", Config::YAML, array("10" => array(), "50" => array(), "80" => array(), "100" => array(), "150" => array(), "200" => array(), "250" => array(), "300" => array(), "350" => array(), "400" => array(), "450" => array(), "500" => array(),));
 		$this->fishsize = new FishSizeConfig();
 		$this->npc = new Config($this->getDataFolder() . "spawn.yml", Config::YAML);
+		$this->otosidama = new Config($this->getDataFolder() . "2021.yml", Config::YAML);
 		if(!file_exists($this->getDataFolder() . "log.db")){
 			$this->log = new \SQLite3($this->getDataFolder() . "log.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
 		}else{
 			$this->log = new \SQLite3($this->getDataFolder() . "log.db", SQLITE3_OPEN_READWRITE);
 		}
 		$this->log->query("CREATE TABLE IF NOT EXISTS logdata (xyz TEXT PRIMARY KEY, who TEXT , action TEXT, time TEXT, id INT,meta INT)");
+
+		/*if(!file_exists(main::getMain()->getDataFolder() . "VS.db")){
+			$this->vs = new \SQLite3(main::getMain()->getDataFolder()  . "VS.db", SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+		}else{
+			$this->vs = new \SQLite3(main::getMain()->getDataFolder()  . "VS.db", SQLITE3_OPEN_READWRITE);
+		}*/
+
 	}
 
 	private function spawnEntity(){
@@ -337,10 +348,6 @@ class main extends PluginBase implements Listener {
 		new AllCommands($this,$sender,$command->getName(),$args);
 		return true;
 	}
-
-
-
-
 
 	public static function getPlayerData(String $name):PlayerEvent{
 		return self::getMain()->playerdata[$name];
@@ -367,8 +374,6 @@ class main extends PluginBase implements Listener {
 		Sender::sendAsync($webhook);
 	}
 
-
-
 	public function isCBan($cid) : bool{
 		$this->banlist->reload();
 		return $this->banlist->exists($cid);
@@ -380,8 +385,6 @@ class main extends PluginBase implements Listener {
 		$this->banlist->set(strval($cid),$reason);
 		$this->banlist->save();
 	}
-
-
 
 	public function removeCBan($cid) {
 		if (!$this->isCBan($cid)) return;
@@ -408,14 +411,15 @@ class main extends PluginBase implements Listener {
 	public static function isOres(Player $player,PlayerEvent $playerdata){
 	 	 $ores=$playerdata->getVar("COAL")+$playerdata->getVar("LAPIS")+$playerdata->getVar("IRON")+$playerdata->getVar("REDSTONE")+$playerdata->getVar("GOLD")+$playerdata->getVar("DIAMOND")+$playerdata->getVar("EMERALD");
 		 if($ores===10000or$ores===50000){
-		 	$player->addTitle("実績を達成", "§a鉱石を{$playerdata->getVar("ORE")}個集めた！", 30, 30, 20);
+		 	$player->sendTitle("実績を達成", "§a鉱石を{$playerdata->getVar("ORE")}個集めた！", 30, 30, 20);
 		 }
 	}
 
 	public function addEXP(Player $player, int $number) {
 		$name = $player->getName();
 		$playerdata=self::getPlayerData($name);
-		switch ($playerdata->isLevelup($number)) {
+		$lu=$playerdata->isLevelup($number);
+		switch ($lu) {
 			case 0:
 				return;
 			case 1:
@@ -452,6 +456,7 @@ class main extends PluginBase implements Listener {
 		$pos = new Vector3($player->x, $player->y, $player->z);
 		$player->getLevel()->broadcastLevelSoundEvent($pos, LevelSoundEventPacket::SOUND_BEACON_ACTIVATE);
 		$playerdata->setDisplayName($playerdata->getDisplayName());
+
 	}
 
 	public function rate(Player $killer,Player $deather) {
@@ -483,8 +488,6 @@ class main extends PluginBase implements Listener {
 		$time = date("Y/m/d-H:i:s", time());
 		$this->log->query("INSERT OR REPLACE INTO logdata VALUES(\"$xyz\",   \"$who\",  \"$eventname\", \"$time\", \"$id\",\"$meta\")");
 	}
-
-
 
 	public function checklog($x, $y, $z,String $level,Player $player){
 		$xyz =""."x"."$x"."y"."$y"."z"."$z"."w"."$level"."";
@@ -524,6 +527,12 @@ class main extends PluginBase implements Listener {
 			return false;
 	}
 
+	public function getShop():array{
+		return $this->shop;
+	}
+
+
+
 	public static function isBanItem(int $id){
 		switch ($id){
 			case 10:
@@ -540,9 +549,30 @@ class main extends PluginBase implements Listener {
 		return false;
 	}
 
+	public function isFloatingSetting():bool{
+		return $this->floatingSetting;
+	}
+
+	public function changeFloatingSetting(){
+		$this->floatingSetting=true;
+	}
+
+	public function getServerReloadTick():int{
+		return $this->reload;
+	}
+
+	public function CountDownServerReloadTick(){
+		$this->reload--;
+	}
+
+	public static function getEXShop(){
+		return self::$exshop;
+	}
+
+
 	public function registerRanking(PlayerEvent $pe){
-		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level"];
-		$var=["STAY","DAY","MAXREPEAT","BREAK","PEACE","TRAPPIST","FLOWER","WOOD","GACHA","SHOPPING","SLOT","KILL","MAXKILLSTREAK","FISH","COAL","LAPIS","IRON","REDSTONE","GOLD","DIAMOND","EMERALD","LEVEL"];
+		$configname=["stay","login","repeat","break","peace","trappist","flower","wood","gacha","shopping","slot","kill","killst","fishing","coal","lapis","iron","redstone","gold","diamond","emerald","level","spaceshipsize"];
+		$var=["STAY","DAY","MAXREPEAT","BREAK","PEACE","TRAPPIST","FLOWER","WOOD","GACHA","SHOPPING","SLOT","KILL","MAXKILLSTREAK","FISH","COAL","LAPIS","IRON","REDSTONE","GOLD","DIAMOND","EMERALD","LEVEL","SPACESHIP_SIZE"];
 		for($i=0;$i<count($configname);$i++){
 			$stay=new RankConfig($this->getDataFolder()."Rank/{$configname[$i]}.yml");
 			$stay->set($pe->getName(),$pe->getVar($var[$i]));
@@ -553,10 +583,36 @@ class main extends PluginBase implements Listener {
 		$login->save();
 	}
 
+	public function getVirtualStorage():\SQLite3{
+		return $this->vs;
+	}
 
+	public function addToken($token){
+		$this->token[]=$token;
+		//var_dump($this->token);
+	}
+
+	public function removeToken($token){
+		$array=array_diff($this->token,array($token));
+		$this->token=array_values($array);
+		//var_dump($this->token);
+	}
+
+	public function existsToken($token){
+		return in_array($token,$this->token);
+	}
 
 	public function onDisable() {
+		foreach (Server::getInstance()->getOnlinePlayers() as $p) {
+			if (!$this->getPlayerData($p->getName())) {
+				continue;
+			}
+			$playerdata = $this->getPlayerData($p->getName());
+			if ($playerdata->getLoad()) {
+				$playerdata->save($this->economyAPI->myMoney($p->getName()));
+			}
+			$p->save();
+		}
 		$this->sendDiscord("CLOSE","宇宙サーバーが停止しました");
-	 }
-
+	}
 }
